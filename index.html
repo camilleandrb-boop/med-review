@@ -99,15 +99,6 @@ dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
 <div class="filter">
   <span id="filter-text"></span>
 </div>
-
-<section class="panel" style="margin-top:24px">
-  <h2>Tirar Dúvida com IA</h2>
-  <form id="f-ia" style="display:flex; flex-direction:row; gap:8px">
-    <input id="ia-q" placeholder="Pergunte sobre um diagnóstico, tratamento..." required style="flex:1">
-    <button class="main" type="submit">Perguntar</button>
-  </form>
-  <div id="ia-resp" style="display:none; margin-top:8px; font-size:14px; padding:12px; background:var(--bg); border-radius:8px; overflow-wrap:anywhere;"></div>
-</section>
 </div>
 
 <!-- Modal do Repositório -->
@@ -122,7 +113,6 @@ dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
   
   <div style="margin-top:16px;">
     <select id="repo-filter" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--line); background:var(--bg); font-weight:500;">
-      <!-- Opções geradas pelo JS -->
     </select>
   </div>
 
@@ -134,7 +124,7 @@ dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-// SUAS CHAVES DO FIREBASE
+// CHAVES DO FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyDv9RToofGgtW57WIavrsOY6azshFg5rHw",
   authDomain: "med-review-abae5.firebaseapp.com",
@@ -255,28 +245,10 @@ getDoc(docRef).then(snap => {
   }
   render();
 }).catch(e => {
-  $('rev').innerHTML = '<div class="empty">Falha ao carregar dados da nuvem. Verifique se o modo de teste foi ativado nas regras do Firebase.</div>';
+  $('rev').innerHTML = '<div class="empty">Falha ao carregar dados da nuvem. Verifique sua conexão.</div>';
 });
 
 $('f-f').onsubmit=e=>{e.preventDefault();S.cards.unshift(newCard($('f-q').value.trim(),$('f-a').value.trim(),$('f-area').value));$('f-q').value='';$('f-a').value='';flip=false;save();render()};
-
-// Integração IA Gemini com a chave fornecida
-$('f-ia').onsubmit=async e=>{e.preventDefault();
-  const q=$('ia-q').value, resp=$('ia-resp');
-  resp.style.display='block'; resp.innerHTML='<i>Pensando...</i>';
-  try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AQ.Ab8RN6INWu3v8HPdIj8QBZN4T8i21It4udqDNzOEj9qX2n0bkw`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ parts: [{ text: "Responda de forma curta e direta: " + q }] }] })
-    });
-    if(!res.ok) throw new Error();
-    const data = await res.json();
-    const text = data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-    resp.innerHTML = text.replace(/\n/g, '<br>');
-  } catch(err) {
-    resp.innerHTML = '<i>Erro na conexão com a IA. A chave da API pode estar incompleta ou inválida.</i>';
-  }
-};
 
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,id=b.dataset.id;
@@ -291,7 +263,7 @@ document.addEventListener('click',e=>{
     }
   }
   else if(a==='view-all'){ 
-    $('repo-filter').value = filt || ""; // O modal abre filtrado se você estiver filtrando na tela inicial
+    $('repo-filter').value = filt || ""; 
     renderRepo(); 
     $('mod-all').showModal(); 
   }
