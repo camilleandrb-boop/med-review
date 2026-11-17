@@ -1,4 +1,4 @@
-y<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
@@ -64,17 +64,33 @@ h3{margin:22px 0 10px;font-size:17px;font-weight:600}
 .tile i{display:block;width:34px;height:6px;border-radius:3px;background:var(--c)}
 .filter{font-size:14px;color:var(--mute);min-height:22px;margin-top:8px;display:flex;justify-content:space-between;align-items:center;}
 .filter button{padding:2px 8px;margin-left:6px;font-size:13px}
+
+/* Estilos do Modal do Repositório */
+dialog { border: none; border-radius: 14px; background: var(--surface); color: var(--ink); padding: 20px; width: 95%; max-width: 600px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+.repo-list { display:flex; flex-direction:column; gap:10px; max-height:60vh; overflow-y:auto; padding-right:4px; margin-top: 16px; }
+.repo-card { padding:14px; border:1px solid var(--line); border-radius:10px; background:var(--bg); text-align:left; }
+.repo-q { font-weight:600; margin-bottom:6px; font-size:15px; }
+.repo-a { color:var(--mute); margin-bottom:10px; font-size:14px; }
 </style>
 </head>
 <body>
 <div class="wrap">
 <header><h1>Med Review</h1><div class="sub" id="hoje"></div></header>
 <div class="grid">
-  <section class="panel"><h2>Flashcards <span class="count" id="c-f"></span></h2>
+  <section class="panel">
+    <h2>Flashcards 
+      <span class="ctrl">
+        <span class="count" id="c-f"></span>
+        <button data-act="view-all" aria-label="Ver todos os cards">🗂️ Ver Repositório</button>
+      </span>
+    </h2>
     <form id="f-f"><input id="f-q" placeholder="Frente (pergunta)" required aria-label="Frente">
       <input id="f-a" placeholder="Verso (resposta)" required aria-label="Verso">
       <div class="row"><select id="f-area" aria-label="Área"></select><button class="main" type="submit" style="flex:1">Criar card</button></div></form>
-    <div id="rev"><div class="empty">Sincronizando com a nuvem... ☁️</div></div></section>
+    <div id="rev"><div class="empty">Sincronizando com a nuvem... ☁️</div></div>
+  </section>
+  
   <section class="panel"><h2><span id="cal-t"></span><span class="ctrl"><button data-act="mprev" aria-label="Mês anterior">‹</button><button data-act="mnext" aria-label="Próximo mês">›</button></span></h2>
     <div class="cal" id="cal"></div><ul id="l-d"></ul></section>
 </div>
@@ -94,12 +110,31 @@ h3{margin:22px 0 10px;font-size:17px;font-weight:600}
 </section>
 </div>
 
+<!-- Modal do Repositório -->
+<dialog id="mod-all">
+  <div class="ctrl" style="align-items:flex-start;">
+    <div>
+      <h2 style="margin:0; font-size:18px;">Todos os Flashcards</h2>
+      <div id="repo-count" style="font-size:13px; color:var(--mute); margin-top:4px;"></div>
+    </div>
+    <button class="x" onclick="this.closest('dialog').close()" style="font-size:24px; cursor:pointer;">×</button>
+  </div>
+  
+  <div style="margin-top:16px;">
+    <select id="repo-filter" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--line); background:var(--bg); font-weight:500;">
+      <!-- Opções geradas pelo JS -->
+    </select>
+  </div>
+
+  <div id="all-cards-list" class="repo-list"></div>
+</dialog>
+
 <script type="module">
 // Importações do Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-// SUAS CHAVES DO FIREBASE INSERIDAS:
+// SUAS CHAVES DO FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyDv9RToofGgtW57WIavrsOY6azshFg5rHw",
   authDomain: "med-review-abae5.firebaseapp.com",
@@ -122,7 +157,11 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const vis=l=>filt?l.filter(x=>x.a===filt):l;
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+
+// Preenche os selects (Novo Card e Repositório)
 $('f-area').innerHTML=AREAS.map(a=>`<option value="${a.id}">${a.n}</option>`).join('');
+$('repo-filter').innerHTML='<option value="">Todas as áreas (Geral)</option>' + AREAS.map(a=>`<option value="${a.id}">${a.n}</option>`).join('');
+
 $('hoje').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
 
 function norm(c){if(c.st===undefined)Object.assign(c,{st:'new',step:0,ivl:0,ease:250,due:0,lapses:0})}
@@ -151,7 +190,7 @@ function renderRev(){const now=Date.now(),all=vis(S.cards),due=dueList();let h='
  else{const c=due[0],k=s=>due.filter(s).length;
   h=`<div class="stats">Novos ${k(x=>x.st==='new')} · Aprendendo ${k(x=>x.st==='learn'||x.st==='relearn')} · Revisar ${k(x=>x.st==='review')}</div><div class="card a-${c.a}" data-act="flip" role="button" tabindex="0">${esc(flip?c.v:c.f)}</div>`+
   (flip?`<div class="rate">${['Errei','Difícil','Bom','Fácil'].map((t,i)=>`<button data-act="rate" data-r="${i+1}"><b>${t}</b><small>${lbl(sched(c,i+1).due-now)}</small></button>`).join('')}</div>`:'<button class="main" data-act="flip" style="width:100%;margin-top:8px">Mostrar resposta</button>')+
-  `<div class="ctrl" style="margin-top:8px"><span class="count">${NOME[c.a]}</span><button class="x" data-act="del-f" data-id="${c.id}" aria-label="Excluir card">×</button></div>`}
+  `<div class="ctrl" style="margin-top:8px"><span class="count">${NOME[c.a]}</span><button class="x" data-act="del-f" data-id="${c.id}" aria-label="Excluir card">🗑️</button></div>`}
  $('rev').innerHTML=h}
 
 const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -166,6 +205,32 @@ function renderCal(){const y=cmo.getFullYear(),m=cmo.getMonth(),first=new Date(y
  $('cal').innerHTML=h;
  const ds=selDay?by[selDay]||[]:[],ST={new:'Novo',learn:'Aprendendo',relearn:'Reaprendendo',review:'Revisão'};
  $('l-d').innerHTML=selDay?(ds.length?ds.map(c=>`<li class="a-${c.a}">${esc(c.f)}<small>${NOME[c.a]} · ${ST[c.st]}</small></li>`).join(''):'<li class="empty" style="background:none;border:0">Nenhuma revisão em '+fmtD(selDay)+'.</li>'):'<li class="empty" style="background:none;border:0">Toque em um dia para ver as revisões previstas.</li>'}
+
+// Lógica do Repositório Geral com Filtro
+function renderRepo() {
+  const rFilt = $('repo-filter').value;
+  const all = rFilt ? S.cards.filter(x => x.a === rFilt) : S.cards;
+  
+  $('repo-count').textContent = all.length + (all.length === 1 ? ' card encontrado' : ' cards encontrados');
+  
+  if(!all.length) { 
+    $('all-cards-list').innerHTML = '<div class="empty">Nenhum card encontrado nesta área.</div>'; 
+    return; 
+  }
+  
+  $('all-cards-list').innerHTML = all.map(c => `
+    <div class="repo-card" style="border-left: 5px solid var(--${c.a});">
+      <div class="repo-q">P: ${esc(c.f)}</div>
+      <div class="repo-a">R: ${esc(c.v)}</div>
+      <div class="ctrl" style="margin-top:8px;">
+        <span class="count">${NOME[c.a]}</span>
+        <button class="x" data-act="del-f" data-id="${c.id}" aria-label="Excluir">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+$('repo-filter').addEventListener('change', renderRepo);
 
 function render(){
   $('c-f').textContent=S.cards.length+' cards';
@@ -195,11 +260,12 @@ getDoc(docRef).then(snap => {
 
 $('f-f').onsubmit=e=>{e.preventDefault();S.cards.unshift(newCard($('f-q').value.trim(),$('f-a').value.trim(),$('f-area').value));$('f-q').value='';$('f-a').value='';flip=false;save();render()};
 
+// Integração IA Gemini com a chave fornecida
 $('f-ia').onsubmit=async e=>{e.preventDefault();
   const q=$('ia-q').value, resp=$('ia-resp');
   resp.style.display='block'; resp.innerHTML='<i>Pensando...</i>';
   try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=SUA_CHAVE_GEMINI_AQUI`, {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AQ.Ab8RN6INWu3v8HPdIj8QBZN4T8i21It4udqDNzOEj9qX2n0bkw`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ contents: [{ parts: [{ text: "Responda de forma curta e direta: " + q }] }] })
     });
@@ -208,13 +274,27 @@ $('f-ia').onsubmit=async e=>{e.preventDefault();
     const text = data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
     resp.innerHTML = text.replace(/\n/g, '<br>');
   } catch(err) {
-    resp.innerHTML = '<i>Adicione sua API Key do Gemini no código fonte.</i>';
+    resp.innerHTML = '<i>Erro na conexão com a IA. A chave da API pode estar incompleta ou inválida.</i>';
   }
 };
 
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,id=b.dataset.id;
-  if(a==='del-f'){S.cards=S.cards.filter(x=>x.id!==id);flip=false}
+  
+  if(a==='del-f'){
+    if(confirm('Tem certeza que deseja excluir este card permanentemente?')){
+      S.cards=S.cards.filter(x=>x.id!==id);
+      flip=false;
+      save();
+      render();
+      if($('mod-all').open) renderRepo();
+    }
+  }
+  else if(a==='view-all'){ 
+    $('repo-filter').value = filt || ""; // O modal abre filtrado se você estiver filtrando na tela inicial
+    renderRepo(); 
+    $('mod-all').showModal(); 
+  }
   else if(a==='flip')flip=!flip;
   else if(a==='rate')rate(+b.dataset.r);
   else if(a==='area'){filt=filt===id?null:id;flip=false}
@@ -222,7 +302,8 @@ document.addEventListener('click',e=>{
   else if(a==='mprev')cmo.setMonth(cmo.getMonth()-1);
   else if(a==='mnext')cmo.setMonth(cmo.getMonth()+1);
   else if(a==='day')selDay=selDay===id?null:id;
-  save();render();
+  
+  if(a !== 'del-f') { save(); render(); }
 });
 
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.dataset&&e.target.dataset.act==='flip'){e.preventDefault();flip=!flip;render()}});
