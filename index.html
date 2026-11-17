@@ -99,6 +99,7 @@ h3{margin:22px 0 10px;font-size:17px;font-weight:600}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
+// SUAS CHAVES DO FIREBASE INSERIDAS:
 const firebaseConfig = {
   apiKey: "AIzaSyDv9RToofGgtW57WIavrsOY6azshFg5rHw",
   authDomain: "med-review-abae5.firebaseapp.com",
@@ -106,7 +107,7 @@ const firebaseConfig = {
   storageBucket: "med-review-abae5.firebasestorage.app",
   messagingSenderId: "503108478430",
   appId: "1:503108478430:web:03e80333c72b08d6e1294f"
-}; =====================================
+};
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -189,7 +190,7 @@ getDoc(docRef).then(snap => {
   }
   render();
 }).catch(e => {
-  $('rev').innerHTML = '<div class="empty">Falha ao carregar dados da nuvem. Verifique sua conexão.</div>';
+  $('rev').innerHTML = '<div class="empty">Falha ao carregar dados da nuvem. Verifique se o modo de teste foi ativado nas regras do Firebase.</div>';
 });
 
 $('f-f').onsubmit=e=>{e.preventDefault();S.cards.unshift(newCard($('f-q').value.trim(),$('f-a').value.trim(),$('f-area').value));$('f-q').value='';$('f-a').value='';flip=false;save();render()};
