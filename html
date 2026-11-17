@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Med Review</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f1f1f4;--surface:#fbfbfc;--ink:#2e3140;--mute:#737788;--line:#dcdde4;
+  --go:#d8a9b8;--go-bg:#f1dde4;--ped:#b9a9d4;--ped-bg:#e4dcf0;--cm:#a3bbd6;--cm-bg:#dce6f1;
+  --cir:#aecbae;--cir-bg:#e0ecdf;--prev:#e0d29f;--prev-bg:#f1ebd2;
+  color-scheme:light;box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1b1c23;--surface:#242630;--ink:#e6e7ee;--mute:#9a9eb0;--line:#363948;
+  --go:#a9788a;--go-bg:#3a2d34;--ped:#8a7aa8;--ped-bg:#322d41;--cm:#6f89a8;--cm-bg:#2b3442;
+  --cir:#7a977a;--cir-bg:#2c3a2d;--prev:#a99b69;--prev-bg:#3c3829;color-scheme:dark;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Figtree,system-ui,sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:24px 16px 48px}
+header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+h1{font-size:26px;margin:0;font-weight:700;letter-spacing:-.01em}
+.sub{color:var(--mute);font-size:14px;text-transform:capitalize}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+@media(max-width:780px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.panel h2{margin:0;font-size:17px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.count{font-size:13px;color:var(--mute);font-weight:500}
+form{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;gap:8px}
+input,select,button{font:inherit;color:inherit}
+input,select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);min-width:0}
+select{width:auto;flex:0 0 auto;max-width:48%}
+button{cursor:pointer;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px 12px;font-weight:500}
+button.main{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+button:focus-visible,input:focus-visible,select:focus-visible,.card:focus-visible{outline:2px solid var(--cm);outline-offset:2px}
+ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto}
+li{padding:9px 10px;border-radius:10px;background:var(--cb,var(--bg));border-left:4px solid var(--c,var(--line));overflow-wrap:anywhere}
+li small{display:block;color:var(--mute);font-size:13px}
+.x{border:0;background:transparent;color:var(--mute);padding:0 4px;font-size:18px;line-height:1}
+.empty{color:var(--mute);font-size:14px;padding:6px 2px}
+.a-go{--c:var(--go);--cb:var(--go-bg)}.a-ped{--c:var(--ped);--cb:var(--ped-bg)}.a-cm{--c:var(--cm);--cb:var(--cm-bg)}
+.a-cir{--c:var(--cir);--cb:var(--cir-bg)}.a-prev{--c:var(--prev);--cb:var(--prev-bg)}
+.card{border-radius:12px;padding:18px;min-height:120px;display:flex;align-items:center;justify-content:center;text-align:center;background:var(--cb,var(--bg));border:1px solid var(--c,var(--line));overflow-wrap:anywhere;margin-top:8px;cursor:pointer}
+.ctrl{display:flex;gap:8px;justify-content:space-between;align-items:center}
+.rate{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+.rate button{display:flex;flex-direction:column;align-items:center;padding:6px 2px}
+.rate small{color:var(--mute);font-size:12px}
+.stats{font-size:13px;color:var(--mute)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.dow{text-align:center;font-size:12px;color:var(--mute)}
+.day{padding:4px 0;min-height:44px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:13px;border:1px solid transparent;border-radius:8px}
+.day.today{border-color:var(--mute)}.day.sel{background:var(--cm-bg);border-color:var(--cm)}
+.day span{display:flex;gap:2px;height:6px}.day i{width:6px;height:6px;border-radius:50%;background:var(--c)}
+#cal-t{text-transform:capitalize}
+h3{margin:22px 0 10px;font-size:17px;font-weight:600}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.tile{background:var(--cb);border:2px solid transparent;border-radius:14px;padding:16px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:10px;min-height:128px;justify-content:space-between}
+.tile.on{border-color:var(--c)}
+.tile b{font-size:16px;line-height:1.25}
+.tile span{font-size:13px;color:var(--mute)}
+.tile i{display:block;width:34px;height:6px;border-radius:3px;background:var(--c)}
+.filter{font-size:14px;color:var(--mute);min-height:22px;margin-top:8px;display:flex;justify-content:space-between;align-items:center;}
+.filter button{padding:2px 8px;margin-left:6px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>Med Review</h1><div class="sub" id="hoje"></div></header>
+<div class="grid">
+  <section class="panel"><h2>Flashcards <span class="count" id="c-f"></span></h2>
+    <form id="f-f"><input id="f-q" placeholder="Frente (pergunta)" required aria-label="Frente">
+      <input id="f-a" placeholder="Verso (resposta)" required aria-label="Verso">
+      <div class="row"><select id="f-area" aria-label="Área"></select><button class="main" type="submit" style="flex:1">Criar card</button></div></form>
+    <div id="rev"></div></section>
+  <section class="panel"><h2><span id="cal-t"></span><span class="ctrl"><button data-act="mprev" aria-label="Mês anterior">‹</button><button data-act="mnext" aria-label="Próximo mês">›</button></span></h2>
+    <div class="cal" id="cal"></div><ul id="l-d"></ul></section>
+</div>
+<h3>Grandes áreas</h3>
+<div class="tiles" id="tiles"></div>
+<div class="filter">
+  <span id="filter-text"></span>
+  <div style="display:flex; gap:8px;">
+    <button data-act="export">📥 Backup</button>
+    <label style="cursor:pointer; border:1px solid var(--line); background:var(--bg); border-radius:8px; padding:2px 8px; font-size:13px; font-weight:500;">
+      <input type="file" id="import-file" accept=".json" style="display:none">📤 Importar
+    </label>
+  </div>
+</div>
+
+<section class="panel" style="margin-top:24px">
+  <h2>Tirar Dúvida com IA</h2>
+  <form id="f-ia" style="display:flex; flex-direction:row; gap:8px">
+    <input id="ia-q" placeholder="Pergunte sobre um diagnóstico, tratamento..." required style="flex:1">
+    <button class="main" type="submit">Perguntar</button>
+  </form>
+  <div id="ia-resp" style="display:none; margin-top:8px; font-size:14px; padding:12px; background:var(--bg); border-radius:8px; overflow-wrap:anywhere;"></div>
+</section>
+</div>
+
+<script>
+const AREAS=[{id:'go',n:'Ginecologia e Obstetrícia'},{id:'ped',n:'Pediatria'},{id:'cm',n:'Clínica Médica'},{id:'cir',n:'Cirurgia'},{id:'prev',n:'Preventiva'}];
+const NOME=Object.fromEntries(AREAS.map(a=>[a.id,a.n]));
+const MIN=60000,DAY=86400000,STEPS=[1,10],RELEARN=[10];
+let S={cards:[]},filt=null,flip=false,cmo=new Date(),selDay=null;cmo.setDate(1);
+try{const r=localStorage.getItem('estudos-med');if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+const save=()=>{try{localStorage.setItem('estudos-med',JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const vis=l=>filt?l.filter(x=>x.a===filt):l;
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+$('f-area').innerHTML=AREAS.map(a=>`<option value="${a.id}">${a.n}</option>`).join('');
+$('hoje').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+
+function norm(c){if(c.st===undefined)Object.assign(c,{st:'new',step:0,ivl:0,ease:250,due:0,lapses:0})}
+S.cards.forEach(norm);
+const newCard=(f,v,a)=>({id:uid(),f,v,a,st:'new',step:0,ivl:0,ease:250,due:0,lapses:0});
+
+function sched(c,r){const n={...c},now=Date.now();
+ const learn=m=>{n.due=now+m*MIN},grad=d=>{n.st='review';n.ivl=d;n.step=0;n.due=now+d*DAY};
+ if(c.st==='review'){
+  if(r===1){n.lapses++;n.ease=Math.max(130,c.ease-20);n.st='relearn';n.step=0;n.ivl=1;learn(RELEARN[0])}
+  else{const h=Math.max(c.ivl+1,Math.round(c.ivl*1.2)),g=Math.max(h+1,Math.round(c.ivl*c.ease/100)),e=Math.max(g+1,Math.round(c.ivl*c.ease/100*1.3));
+   if(r===2){n.ease=Math.max(130,c.ease-15);grad(h)}else if(r===3)grad(g);else{n.ease=c.ease+15;grad(e)}}
+ }else if(c.st==='relearn'){if(r<=2)learn(RELEARN[0]);else grad(Math.max(1,c.ivl))}
+ else{n.st='learn';
+  if(r===1){n.step=0;learn(STEPS[0])}
+  else if(r===2)learn(c.step===0?(STEPS[0]+STEPS[1])/2:STEPS[c.step]);
+  else if(r===3){if(c.step+1<STEPS.length){n.step=c.step+1;learn(STEPS[n.step])}else grad(1)}
+  else grad(4)}
+ return n}
+function lbl(ms){const m=ms/MIN;if(m<1)return'<1min';if(m<60)return Math.round(m)+'min';if(m<1440)return Math.round(m/60)+'h';const d=Math.round(ms/DAY);return d<30?d+'d':d<365?(d/30).toFixed(1).replace('.0','')+' mês':(d/365).toFixed(1).replace('.0','')+' a'}
+const dueList=()=>vis(S.cards).filter(c=>c.due<=Date.now()).sort((a,b)=>a.due-b.due);
+function rate(r){const c=dueList()[0];if(!c)return;const i=S.cards.findIndex(x=>x.id===c.id);S.cards[i]=sched(c,r);flip=false}
+
+function renderRev(){const now=Date.now(),all=vis(S.cards),due=dueList();let h='';
+ if(!all.length)h='<div class="empty">Crie um card para começar a revisar.</div>';
+ else if(!due.length)h=`<div class="empty">Tudo em dia por aqui. Próxima revisão em ${lbl(Math.min(...all.map(c=>c.due))-now)}.</div>`;
+ else{const c=due[0],k=s=>due.filter(s).length;
+  h=`<div class="stats">Novos ${k(x=>x.st==='new')} · Aprendendo ${k(x=>x.st==='learn'||x.st==='relearn')} · Revisar ${k(x=>x.st==='review')}</div><div class="card a-${c.a}" data-act="flip" role="button" tabindex="0">${esc(flip?c.v:c.f)}</div>`+
+  (flip?`<div class="rate">${['Errei','Difícil','Bom','Fácil'].map((t,i)=>`<button data-act="rate" data-r="${i+1}"><b>${t}</b><small>${lbl(sched(c,i+1).due-now)}</small></button>`).join('')}</div>`:'<button class="main" data-act="flip" style="width:100%;margin-top:8px">Mostrar resposta</button>')+
+  `<div class="ctrl" style="margin-top:8px"><span class="count">${NOME[c.a]}</span><button class="x" data-act="del-f" data-id="${c.id}" aria-label="Excluir card">×</button></div>`}
+ $('rev').innerHTML=h}
+
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const fmtD=s=>{const p=s.split('-');return p[2]+'/'+p[1]};
+const dayKey=c=>ymd(new Date(Math.max(c.due,Date.now())));
+function renderCal(){const y=cmo.getFullYear(),m=cmo.getMonth(),first=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).getDate(),today=ymd(new Date());
+ $('cal-t').textContent=cmo.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+ const by={};vis(S.cards).forEach(c=>{(by[dayKey(c)]=by[dayKey(c)]||[]).push(c)});
+ let h=['D','S','T','Q','Q','S','S'].map(d=>`<div class="dow">${d}</div>`).join('')+'<div></div>'.repeat(first);
+ for(let d=1;d<=n;d++){const k=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'),cs=by[k]||[];
+  h+=`<button class="day${k===today?' today':''}${k===selDay?' sel':''}" data-act="day" data-id="${k}">${d}<span>${cs.slice(0,4).map(c=>`<i class="a-${c.a}"></i>`).join('')}</span></button>`}
+ $('cal').innerHTML=h;
+ const ds=selDay?by[selDay]||[]:[],ST={new:'Novo',learn:'Aprendendo',relearn:'Reaprendendo',review:'Revisão'};
+ $('l-d').innerHTML=selDay?(ds.length?ds.map(c=>`<li class="a-${c.a}">${esc(c.f)}<small>${NOME[c.a]} · ${ST[c.st]}</small></li>`).join(''):'<li class="empty" style="background:none;border:0">Nenhuma revisão em '+fmtD(selDay)+'.</li>'):'<li class="empty" style="background:none;border:0">Toque em um dia para ver as revisões previstas.</li>'}
+
+function render(){
+  $('c-f').textContent=S.cards.length+' cards';
+  renderRev();renderCal();
+  const now=Date.now();
+  $('tiles').innerHTML=AREAS.map(a=>{const cs=S.cards.filter(x=>x.a===a.id);
+    return `<button class="tile a-${a.id} ${filt===a.id?'on':''}" data-act="area" data-id="${a.id}"><i></i><b>${a.n}</b><span>${cs.length} cards · ${cs.filter(c=>c.due<=now).length} para revisar</span></button>`}).join('');
+  $('filter-text').innerHTML=filt?`Mostrando só ${NOME[filt]}<button data-act="clear">Ver tudo</button>`:'';
+}
+$('f-f').onsubmit=e=>{e.preventDefault();S.cards.unshift(newCard($('f-q').value.trim(),$('f-a').value.trim(),$('f-area').value));$('f-q').value='';$('f-a').value='';flip=false;save();render()};
+
+$('f-ia').onsubmit=async e=>{e.preventDefault();
+  const q=$('ia-q').value, resp=$('ia-resp');
+  resp.style.display='block'; resp.innerHTML='<i>Pensando...</i>';
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=SUA_CHAVE_AQUI`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: "Responda de forma curta e direta: " + q }] }] })
+    });
+    if(!res.ok) throw new Error();
+    const data = await res.json();
+    const text = data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+    resp.innerHTML = text.replace(/\n/g, '<br>');
+  } catch(err) {
+    resp.innerHTML = '<i>Para a IA funcionar no seu próprio site, adicione uma API Key gratuita do Gemini no código fonte (linha SUA_CHAVE_AQUI).</i>';
+  }
+};
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,id=b.dataset.id;
+  if(a==='del-f'){S.cards=S.cards.filter(x=>x.id!==id);flip=false}
+  else if(a==='flip')flip=!flip;
+  else if(a==='rate')rate(+b.dataset.r);
+  else if(a==='area'){filt=filt===id?null:id;flip=false}
+  else if(a==='clear'){filt=null;flip=false}
+  else if(a==='mprev')cmo.setMonth(cmo.getMonth()-1);
+  else if(a==='mnext')cmo.setMonth(cmo.getMonth()+1);
+  else if(a==='day')selDay=selDay===id?null:id;
+  else if(a==='export') {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(S));
+    const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "med-review-backup.json"); dl.click(); return;
+  }
+  save();render();
+});
+
+$('import-file').addEventListener('change', e => {
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try { const imp = JSON.parse(ev.target.result); if(imp && imp.cards) { S = imp; S.cards.forEach(norm); save(); render(); alert('Backup restaurado!'); } else throw new Error(); }
+    catch(err) { alert('Arquivo inválido.'); }
+    $('import-file').value = '';
+  };
+  reader.readAsText(file);
+});
+
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.dataset&&e.target.dataset.act==='flip'){e.preventDefault();flip=!flip;render()}});
+setInterval(()=>{renderRev();renderCal()},30000);
+render();
+</script>
+</body>
+</html>
