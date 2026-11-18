@@ -65,13 +65,17 @@ h3{margin:22px 0 10px;font-size:17px;font-weight:600}
 .filter{font-size:14px;color:var(--mute);min-height:22px;margin-top:8px;display:flex;justify-content:space-between;align-items:center;}
 .filter button{padding:2px 8px;margin-left:6px;font-size:13px}
 
-/* Estilos do Modal do Repositório */
+/* Estilos do Modal do Repositório e Imagens */
 dialog { border: none; border-radius: 14px; background: var(--surface); color: var(--ink); padding: 20px; width: 95%; max-width: 600px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
 dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
 .repo-list { display:flex; flex-direction:column; gap:10px; max-height:60vh; overflow-y:auto; padding-right:4px; margin-top: 16px; }
 .repo-card { padding:14px; border:1px solid var(--line); border-radius:10px; background:var(--bg); text-align:left; }
 .repo-q { font-weight:600; margin-bottom:6px; font-size:15px; }
 .repo-a { color:var(--mute); margin-bottom:10px; font-size:14px; }
+.img-prev { display:none; position:relative; align-self:flex-start; margin-top:4px; }
+.img-prev img { max-height:80px; border-radius:6px; border:1px solid var(--line); }
+.img-prev button { position:absolute; top:-8px; right:-8px; background:var(--ink); color:var(--surface); border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; padding:0; font-size:14px; border:none; cursor:pointer; }
+.card-img { max-width:100%; max-height:220px; border-radius:8px; margin-bottom:12px; object-fit:contain; display:block; margin-left:auto; margin-right:auto; }
 </style>
 </head>
 <body>
@@ -85,9 +89,21 @@ dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
         <button data-act="view-all" aria-label="Ver todos os cards">🗂️ Ver Repositório</button>
       </span>
     </h2>
-    <form id="f-f"><input id="f-q" placeholder="Frente (pergunta)" required aria-label="Frente">
+    <form id="f-f">
+      <input id="f-q" placeholder="Frente (pergunta)" required aria-label="Frente">
       <input id="f-a" placeholder="Verso (resposta)" required aria-label="Verso">
-      <div class="row"><select id="f-area" aria-label="Área"></select><button class="main" type="submit" style="flex:1">Criar card</button></div></form>
+      <div class="img-prev" id="img-preview">
+        <img id="img-thumb" src="">
+        <button type="button" id="img-rem" aria-label="Remover imagem">×</button>
+      </div>
+      <div class="row">
+        <select id="f-area" aria-label="Área"></select>
+        <label for="f-file" style="cursor:pointer; background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:6px 12px; font-size:18px; display:flex; align-items:center; justify-content:center;" title="Anexar imagem (ou cole com Ctrl+V)">📷</label>
+        <input type="file" id="f-file" accept="image/*" style="display:none;">
+        <button class="main" type="submit" style="flex:1">Criar card</button>
+      </div>
+      <small style="color:var(--mute); font-size:12px; margin-top:-2px;">Dica: Você pode colar imagens (Ctrl+V) direto aqui.</small>
+    </form>
     <div id="rev"><div class="empty">Sincronizando com a nuvem... ☁️</div></div>
   </section>
   
@@ -122,9 +138,9 @@ dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
 <script type="module">
 // Importações do Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-// CHAVES DO FIREBASE
+// SUAS CHAVES DO FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyDv9RToofGgtW57WIavrsOY6azshFg5rHw",
   authDomain: "med-review-abae5.firebaseapp.com",
@@ -136,26 +152,27 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const docRef = doc(db, 'medreview', 'dados');
+const cardsColl = collection(db, 'medcards');
 
 const AREAS=[{id:'go',n:'Ginecologia e Obstetrícia'},{id:'ped',n:'Pediatria'},{id:'cm',n:'Clínica Médica'},{id:'cir',n:'Cirurgia'},{id:'prev',n:'Preventiva'}];
 const NOME=Object.fromEntries(AREAS.map(a=>[a.id,a.n]));
 const MIN=60000,DAY=86400000,STEPS=[1,10],RELEARN=[10];
 let S={cards:[]},filt=null,flip=false,cmo=new Date(),selDay=null;cmo.setDate(1);
+let currentImg = null; // Armazena a imagem atual em Base64
 
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const vis=l=>filt?l.filter(x=>x.a===filt):l;
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 
-// Preenche os selects (Novo Card e Repositório)
+// Preenche os selects
 $('f-area').innerHTML=AREAS.map(a=>`<option value="${a.id}">${a.n}</option>`).join('');
 $('repo-filter').innerHTML='<option value="">Todas as áreas (Geral)</option>' + AREAS.map(a=>`<option value="${a.id}">${a.n}</option>`).join('');
-
 $('hoje').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
 
+// Algoritmo de Revisão SM-2
 function norm(c){if(c.st===undefined)Object.assign(c,{st:'new',step:0,ivl:0,ease:250,due:0,lapses:0})}
-const newCard=(f,v,a)=>({id:uid(),f,v,a,st:'new',step:0,ivl:0,ease:250,due:0,lapses:0});
+const newCard=(f,v,a,img)=>({id:uid(),f,v,a,img:img||null,st:'new',step:0,ivl:0,ease:250,due:0,lapses:0});
 
 function sched(c,r){const n={...c},now=Date.now();
  const learn=m=>{n.due=now+m*MIN},grad=d=>{n.st='review';n.ivl=d;n.step=0;n.due=now+d*DAY};
@@ -172,13 +189,25 @@ function sched(c,r){const n={...c},now=Date.now();
  return n}
 function lbl(ms){const m=ms/MIN;if(m<1)return'<1min';if(m<60)return Math.round(m)+'min';if(m<1440)return Math.round(m/60)+'h';const d=Math.round(ms/DAY);return d<30?d+'d':d<365?(d/30).toFixed(1).replace('.0','')+' mês':(d/365).toFixed(1).replace('.0','')+' a'}
 const dueList=()=>vis(S.cards).filter(c=>c.due<=Date.now()).sort((a,b)=>a.due-b.due);
-function rate(r){const c=dueList()[0];if(!c)return;const i=S.cards.findIndex(x=>x.id===c.id);S.cards[i]=sched(c,r);flip=false}
+
+function rate(r){
+  const c=dueList()[0];if(!c)return;
+  const i=S.cards.findIndex(x=>x.id===c.id);
+  S.cards[i]=sched(c,r);
+  flip=false;
+  saveCard(S.cards[i]); // Salva apenas o card modificado
+  render();
+}
 
 function renderRev(){const now=Date.now(),all=vis(S.cards),due=dueList();let h='';
  if(!all.length)h='<div class="empty">Crie um card para começar a revisar.</div>';
  else if(!due.length)h=`<div class="empty">Tudo em dia por aqui. Próxima revisão em ${lbl(Math.min(...all.map(c=>c.due))-now)}.</div>`;
  else{const c=due[0],k=s=>due.filter(s).length;
-  h=`<div class="stats">Novos ${k(x=>x.st==='new')} · Aprendendo ${k(x=>x.st==='learn'||x.st==='relearn')} · Revisar ${k(x=>x.st==='review')}</div><div class="card a-${c.a}" data-act="flip" role="button" tabindex="0">${esc(flip?c.v:c.f)}</div>`+
+  const imgHtml = c.img ? `<img src="${c.img}" class="card-img">` : '';
+  h=`<div class="stats">Novos ${k(x=>x.st==='new')} · Aprendendo ${k(x=>x.st==='learn'||x.st==='relearn')} · Revisar ${k(x=>x.st==='review')}</div>
+  <div class="card a-${c.a}" data-act="flip" role="button" tabindex="0">
+    <div>${imgHtml}${esc(flip?c.v:c.f).replace(/\n/g,'<br>')}</div>
+  </div>`+
   (flip?`<div class="rate">${['Errei','Difícil','Bom','Fácil'].map((t,i)=>`<button data-act="rate" data-r="${i+1}"><b>${t}</b><small>${lbl(sched(c,i+1).due-now)}</small></button>`).join('')}</div>`:'<button class="main" data-act="flip" style="width:100%;margin-top:8px">Mostrar resposta</button>')+
   `<div class="ctrl" style="margin-top:8px"><span class="count">${NOME[c.a]}</span><button class="x" data-act="del-f" data-id="${c.id}" aria-label="Excluir card">🗑️</button></div>`}
  $('rev').innerHTML=h}
@@ -196,30 +225,26 @@ function renderCal(){const y=cmo.getFullYear(),m=cmo.getMonth(),first=new Date(y
  const ds=selDay?by[selDay]||[]:[],ST={new:'Novo',learn:'Aprendendo',relearn:'Reaprendendo',review:'Revisão'};
  $('l-d').innerHTML=selDay?(ds.length?ds.map(c=>`<li class="a-${c.a}">${esc(c.f)}<small>${NOME[c.a]} · ${ST[c.st]}</small></li>`).join(''):'<li class="empty" style="background:none;border:0">Nenhuma revisão em '+fmtD(selDay)+'.</li>'):'<li class="empty" style="background:none;border:0">Toque em um dia para ver as revisões previstas.</li>'}
 
-// Lógica do Repositório Geral com Filtro
+// Lógica do Repositório Geral
 function renderRepo() {
   const rFilt = $('repo-filter').value;
   const all = rFilt ? S.cards.filter(x => x.a === rFilt) : S.cards;
-  
   $('repo-count').textContent = all.length + (all.length === 1 ? ' card encontrado' : ' cards encontrados');
   
-  if(!all.length) { 
-    $('all-cards-list').innerHTML = '<div class="empty">Nenhum card encontrado nesta área.</div>'; 
-    return; 
-  }
+  if(!all.length) { $('all-cards-list').innerHTML = '<div class="empty">Nenhum card encontrado.</div>'; return; }
   
   $('all-cards-list').innerHTML = all.map(c => `
     <div class="repo-card" style="border-left: 5px solid var(--${c.a});">
+      ${c.img ? `<img src="${c.img}" style="max-height:50px; border-radius:4px; float:right; margin-left:8px;">` : ''}
       <div class="repo-q">P: ${esc(c.f)}</div>
       <div class="repo-a">R: ${esc(c.v)}</div>
-      <div class="ctrl" style="margin-top:8px;">
+      <div class="ctrl" style="margin-top:8px; clear:both;">
         <span class="count">${NOME[c.a]}</span>
         <button class="x" data-act="del-f" data-id="${c.id}" aria-label="Excluir">🗑️</button>
       </div>
     </div>
   `).join('');
 }
-
 $('repo-filter').addEventListener('change', renderRepo);
 
 function render(){
@@ -231,24 +256,78 @@ function render(){
   $('filter-text').innerHTML=filt?`Mostrando só ${NOME[filt]}<button data-act="clear">Ver tudo</button>`:'';
 }
 
-// Salva no Firebase
-const save = () => {
-  setDoc(docRef, S).catch(e => console.error("Erro ao salvar no banco:", e));
+// Funções de Banco de Dados Individualizado
+const saveCard = async (c) => setDoc(doc(db, 'medcards', c.id), c).catch(console.error);
+const delCard = async (id) => deleteDoc(doc(db, 'medcards', id)).catch(console.error);
+
+async function loadData() {
+  try {
+    const snap = await getDocs(cardsColl);
+    S.cards = snap.docs.map(d => d.data());
+    S.cards.forEach(norm);
+
+    // Migração de cards antigos do modo documento único para a nova estrutura individualizada
+    const oldRef = doc(db, 'medreview', 'dados');
+    const oldSnap = await getDoc(oldRef);
+    if(oldSnap.exists() && oldSnap.data().cards?.length > 0) {
+      const oldCards = oldSnap.data().cards;
+      for(let c of oldCards) {
+        norm(c); await saveCard(c); S.cards.push(c);
+      }
+      await setDoc(oldRef, {cards: []}); // Esvazia o documento antigo para não duplicar
+    }
+    
+    // Ordena para que os mais recentes criados fiquem por último no array geral
+    S.cards.sort((a,b) => b.due - a.due);
+    render();
+  } catch(e) {
+    $('rev').innerHTML = '<div class="empty">Falha ao carregar dados da nuvem. Verifique sua conexão.</div>';
+  }
+}
+loadData();
+
+// Processamento e Compressão de Imagens
+const processImg = (file) => {
+  if(!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 700; // Resolução máxima mantendo qualidade para leitura
+      let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) { if (w > h) { h *= MAX/w; w = MAX; } else { w *= MAX/h; h = MAX; } }
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      currentImg = canvas.toDataURL('image/jpeg', 0.7); // Comprime em JPEG otimizado
+      $('img-thumb').src = currentImg;
+      $('img-preview').style.display = 'inline-block';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
 };
 
-// Carrega do Firebase ao iniciar
-getDoc(docRef).then(snap => {
-  if(snap.exists()) {
-    S = snap.data();
-    if(!S.cards) S.cards = [];
-    S.cards.forEach(norm);
-  }
-  render();
-}).catch(e => {
-  $('rev').innerHTML = '<div class="empty">Falha ao carregar dados da nuvem. Verifique sua conexão.</div>';
+$('f-file').addEventListener('change', e => processImg(e.target.files[0]));
+$('f-f').addEventListener('paste', e => {
+  const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+  for (let item of items) if (item.type.indexOf('image/') === 0) processImg(item.getAsFile());
 });
+$('img-rem').onclick = () => { currentImg = null; $('img-preview').style.display = 'none'; $('f-file').value = ''; };
 
-$('f-f').onsubmit=e=>{e.preventDefault();S.cards.unshift(newCard($('f-q').value.trim(),$('f-a').value.trim(),$('f-area').value));$('f-q').value='';$('f-a').value='';flip=false;save();render()};
+// Adicionando um card
+$('f-f').onsubmit=e=>{
+  e.preventDefault();
+  const c = newCard($('f-q').value.trim(), $('f-a').value.trim(), $('f-area').value, currentImg);
+  S.cards.unshift(c);
+  saveCard(c); // Salva o card na nuvem imediatamente
+  
+  $('f-q').value=''; $('f-a').value=''; 
+  $('img-rem').click(); // Limpa a imagem
+  flip=false; 
+  render();
+};
 
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,id=b.dataset.id;
@@ -256,26 +335,20 @@ document.addEventListener('click',e=>{
   if(a==='del-f'){
     if(confirm('Tem certeza que deseja excluir este card permanentemente?')){
       S.cards=S.cards.filter(x=>x.id!==id);
+      delCard(id); // Deleta direto da nuvem
       flip=false;
-      save();
       render();
       if($('mod-all').open) renderRepo();
     }
   }
-  else if(a==='view-all'){ 
-    $('repo-filter').value = filt || ""; 
-    renderRepo(); 
-    $('mod-all').showModal(); 
-  }
-  else if(a==='flip')flip=!flip;
-  else if(a==='rate')rate(+b.dataset.r);
-  else if(a==='area'){filt=filt===id?null:id;flip=false}
-  else if(a==='clear'){filt=null;flip=false}
-  else if(a==='mprev')cmo.setMonth(cmo.getMonth()-1);
-  else if(a==='mnext')cmo.setMonth(cmo.getMonth()+1);
-  else if(a==='day')selDay=selDay===id?null:id;
-  
-  if(a !== 'del-f') { save(); render(); }
+  else if(a==='view-all'){ $('repo-filter').value = filt || ""; renderRepo(); $('mod-all').showModal(); }
+  else if(a==='flip'){ flip=!flip; render(); }
+  else if(a==='rate') rate(+b.dataset.r);
+  else if(a==='area'){ filt=filt===id?null:id; flip=false; render(); }
+  else if(a==='clear'){ filt=null; flip=false; render(); }
+  else if(a==='mprev'){ cmo.setMonth(cmo.getMonth()-1); render(); }
+  else if(a==='mnext'){ cmo.setMonth(cmo.getMonth()+1); render(); }
+  else if(a==='day'){ selDay=selDay===id?null:id; render(); }
 });
 
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.dataset&&e.target.dataset.act==='flip'){e.preventDefault();flip=!flip;render()}});
