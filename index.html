@@ -7,14 +7,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* Nova paleta Off-White / Bege Claro */
-  --bg:#f4f1ea;       /* Bege muito claro para o fundo geral */
-  --surface:#fdfcf9;  /* Off-white para os painéis */
-  --ink:#4a453e;      /* Cinza/Marrom escuro para o texto principal */
-  --mute:#948d84;     /* Bege escurecido para textos secundários */
-  --line:#e3dec9;     /* Bordas suaves */
+  /* Paleta Off-White / Bege Claro */
+  --bg:#f4f1ea;       
+  --surface:#fdfcf9;  
+  --ink:#4a453e;      
+  --mute:#948d84;     
+  --line:#e3dec9;     
   
-  /* Cores das Grandes Áreas (Mantidas) */
+  /* Cores das Grandes Áreas */
   --go:#d8a9b8;--go-bg:#f1dde4;--ped:#b9a9d4;--ped-bg:#e4dcf0;--cm:#a3bbd6;--cm-bg:#dce6f1;
   --cir:#aecbae;--cir-bg:#e0ecdf;--prev:#e0d29f;--prev-bg:#f1ebd2;
   
@@ -48,15 +48,15 @@ ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px
 li{padding:9px 10px;border-radius:10px;background:var(--cb,var(--bg));border-left:4px solid var(--c,var(--line));overflow-wrap:anywhere}
 li small{display:block;color:var(--mute);font-size:13px}
 .x{border:0;background:transparent;color:var(--mute);padding:0 4px;font-size:18px;line-height:1}
-.empty{color:var(--mute);font-size:14px;padding:6px 2px}
+.empty{color:var(--mute);font-size:14px;padding:6px 2px; text-align:center;}
 .a-go{--c:var(--go);--cb:var(--go-bg)}.a-ped{--c:var(--ped);--cb:var(--ped-bg)}.a-cm{--c:var(--cm);--cb:var(--cm-bg)}
 .a-cir{--c:var(--cir);--cb:var(--cir-bg)}.a-prev{--c:var(--prev);--cb:var(--prev-bg)}
-.card{border-radius:12px;padding:18px;min-height:120px;display:flex;align-items:center;justify-content:center;text-align:center;background:var(--cb,var(--bg));border:1px solid var(--c,var(--line));overflow-wrap:anywhere;margin-top:8px;cursor:pointer}
+.card{border-radius:12px;padding:24px 18px;min-height:120px;display:flex;align-items:center;justify-content:center;text-align:center;background:var(--cb,var(--bg));border:1px solid var(--c,var(--line));overflow-wrap:anywhere;margin-top:8px;cursor:pointer}
 .ctrl{display:flex;gap:8px;justify-content:space-between;align-items:center}
 .rate{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
-.rate button{display:flex;flex-direction:column;align-items:center;padding:6px 2px}
-.rate small{color:var(--mute);font-size:12px}
-.stats{font-size:13px;color:var(--mute)}
+.rate button{display:flex;flex-direction:column;align-items:center;padding:10px 4px}
+.rate small{color:var(--mute);font-size:12px;margin-top:4px}
+.stats{font-size:14px;color:var(--mute);text-align:center}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
 .dow{text-align:center;font-size:12px;color:var(--mute)}
 .day{padding:4px 0;min-height:44px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:13px;border:1px solid transparent;border-radius:8px}
@@ -65,17 +65,19 @@ li small{display:block;color:var(--mute);font-size:13px}
 #cal-t{text-transform:capitalize}
 h3{margin:22px 0 10px;font-size:17px;font-weight:600}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
-.tile{background:var(--cb);border:2px solid transparent;border-radius:14px;padding:16px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:10px;min-height:128px;justify-content:space-between}
+.tile{background:var(--cb);border:2px solid transparent;border-radius:14px;padding:16px;text-align:left;display:flex;flex-direction:column;gap:10px;min-height:140px;justify-content:space-between}
 .tile.on{border-color:var(--c)}
+.tile-hitbox{cursor:pointer;flex:1}
 .tile b{font-size:16px;line-height:1.25}
-.tile span{font-size:13px;color:var(--mute)}
-.tile i{display:block;width:34px;height:6px;border-radius:3px;background:var(--c)}
+.tile i{display:block;width:34px;height:6px;border-radius:3px;background:var(--c);margin-bottom:8px}
+.qs-btn{width:100%;padding:10px;border-radius:8px;background:var(--surface);border:1px solid var(--c);color:var(--ink);font-weight:600;font-size:14px;text-align:center}
+.qs-btn:hover{background:var(--c);color:var(--bg)}
 .filter{font-size:14px;color:var(--mute);min-height:22px;margin-top:8px;display:flex;justify-content:space-between;align-items:center;}
 .filter button{padding:2px 8px;margin-left:6px;font-size:13px}
 
-/* Estilos do Modal do Repositório e Imagens */
-dialog { border: none; border-radius: 14px; background: var(--surface); color: var(--ink); padding: 20px; width: 95%; max-width: 600px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
-dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+/* Modais (Repositório e Modo Foco de Estudo) */
+dialog { border: none; border-radius: 14px; background: var(--surface); color: var(--ink); padding: 24px; width: 95%; max-width: 600px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+dialog::backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
 .repo-list { display:flex; flex-direction:column; gap:10px; max-height:60vh; overflow-y:auto; padding-right:4px; margin-top: 16px; }
 .repo-card { padding:14px; border:1px solid var(--line); border-radius:10px; background:var(--bg); text-align:left; }
 .repo-q { font-weight:600; margin-bottom:6px; font-size:15px; }
@@ -83,21 +85,24 @@ dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
 .img-prev { display:none; position:relative; align-self:flex-start; margin-top:4px; }
 .img-prev img { max-height:80px; border-radius:6px; border:1px solid var(--line); }
 .img-prev button { position:absolute; top:-8px; right:-8px; background:var(--ink); color:var(--surface); border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; padding:0; font-size:14px; border:none; cursor:pointer; }
-.card-img { max-width:100%; max-height:220px; border-radius:8px; margin-bottom:12px; object-fit:contain; display:block; margin-left:auto; margin-right:auto; }
-
-/* Estilos para Edição no Repositório */
+.card-img { max-width:100%; max-height:260px; border-radius:8px; margin-bottom:16px; object-fit:contain; display:block; margin-left:auto; margin-right:auto; }
 .edit-input { width: 100%; margin-bottom: 8px; padding: 8px; border: 1px solid var(--mute); border-radius: 6px; background: var(--surface); }
+
+/* Foco de Estudo Específico */
+#mod-study { max-width: 700px; padding: 32px 24px; }
+.study-title { font-size: 14px; color: var(--mute); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 </style>
 </head>
 <body>
 <div class="wrap">
 <header><h1>Med Review</h1><div class="sub" id="hoje"></div></header>
 <div class="grid">
+  <!-- Painel de Criação e Resumo -->
   <section class="panel">
     <h2>Flashcards 
       <span class="ctrl">
         <span class="count" id="c-f"></span>
-        <button data-act="view-all" aria-label="Ver todos os cards">🗂️ Ver Repositório</button>
+        <button data-act="view-all" aria-label="Ver todos os cards">🗂️ Repositório</button>
       </span>
     </h2>
     <form id="f-f">
@@ -111,20 +116,37 @@ dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
         <select id="f-area" aria-label="Área"></select>
         <button class="main" type="submit" style="flex:1">Criar card</button>
       </div>
-      <small style="color:var(--mute); font-size:12px; margin-top:-2px;">Dica: Você pode anexar imagens colando com Ctrl+V (ou Colar).</small>
+      <small style="color:var(--mute); font-size:12px; margin-top:-2px;">Dica: Cole imagens aqui com Ctrl+V (ou Colar).</small>
     </form>
-    <div id="rev"><div class="empty">Sincronizando com a nuvem... ☁️</div></div>
+    
+    <div style="border-top: 1px solid var(--line); margin: 8px 0;"></div>
+    
+    <!-- Resumo de Revisão SM-2 -->
+    <div id="rev-summary">
+      <div class="empty">Sincronizando com a nuvem... ☁️</div>
+    </div>
   </section>
   
+  <!-- Calendário -->
   <section class="panel"><h2><span id="cal-t"></span><span class="ctrl"><button data-act="mprev" aria-label="Mês anterior">‹</button><button data-act="mnext" aria-label="Próximo mês">›</button></span></h2>
     <div class="cal" id="cal"></div><ul id="l-d"></ul></section>
 </div>
-<h3>Grandes áreas</h3>
+
+<h3>Áreas de Estudo</h3>
 <div class="tiles" id="tiles"></div>
 <div class="filter">
   <span id="filter-text"></span>
 </div>
 </div>
+
+<!-- Modal Central de Estudo Focado -->
+<dialog id="mod-study">
+  <div class="ctrl" style="align-items:center; margin-bottom: 24px;">
+    <div class="study-title" id="study-title">Estudo</div>
+    <button class="x" data-act="close-study" style="font-size:28px; cursor:pointer;">×</button>
+  </div>
+  <div id="study-content"></div>
+</dialog>
 
 <!-- Modal do Repositório -->
 <dialog id="mod-all">
@@ -140,16 +162,13 @@ dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
     <select id="repo-filter" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--line); background:var(--bg); font-weight:500;">
     </select>
   </div>
-
   <div id="all-cards-list" class="repo-list"></div>
 </dialog>
 
 <script type="module">
-// Importações do Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-// SUAS CHAVES DO FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyDv9RToofGgtW57WIavrsOY6azshFg5rHw",
   authDomain: "med-review-abae5.firebaseapp.com",
@@ -166,21 +185,28 @@ const cardsColl = collection(db, 'medcards');
 const AREAS=[{id:'go',n:'Ginecologia e Obstetrícia'},{id:'ped',n:'Pediatria'},{id:'cm',n:'Clínica Médica'},{id:'cir',n:'Cirurgia'},{id:'prev',n:'Preventiva'}];
 const NOME=Object.fromEntries(AREAS.map(a=>[a.id,a.n]));
 const MIN=60000,DAY=86400000,STEPS=[1,10],RELEARN=[10];
-let S={cards:[]},filt=null,flip=false,cmo=new Date(),selDay=null;cmo.setDate(1);
-let currentImg = null; // Armazena a imagem colada
-let editingId = null;  // Armazena qual card está sendo editado no modal
+
+let S={cards:[]}, filt=null, cmo=new Date(), selDay=null;
+cmo.setDate(1);
+
+// Variáveis de Estudo Focado
+let studyMode = null; // 'rev' (SM-2) ou 'qs' (Rápido)
+let flip = false;
+let qsQueue = []; 
+
+let currentImg = null; 
+let editingId = null;  
 
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const vis=l=>filt?l.filter(x=>x.a===filt):l;
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 
-// Preenche os selects
 $('f-area').innerHTML=AREAS.map(a=>`<option value="${a.id}">${a.n}</option>`).join('');
 $('repo-filter').innerHTML='<option value="">Todas as áreas (Geral)</option>' + AREAS.map(a=>`<option value="${a.id}">${a.n}</option>`).join('');
 $('hoje').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
 
-// Algoritmo de Revisão SM-2
+// SM-2
 function norm(c){if(c.st===undefined)Object.assign(c,{st:'new',step:0,ivl:0,ease:250,due:0,lapses:0})}
 const newCard=(f,v,a,img)=>({id:uid(),f,v,a,img:img||null,st:'new',step:0,ivl:0,ease:250,due:0,lapses:0});
 
@@ -200,27 +226,73 @@ function sched(c,r){const n={...c},now=Date.now();
 function lbl(ms){const m=ms/MIN;if(m<1)return'<1min';if(m<60)return Math.round(m)+'min';if(m<1440)return Math.round(m/60)+'h';const d=Math.round(ms/DAY);return d<30?d+'d':d<365?(d/30).toFixed(1).replace('.0','')+' mês':(d/365).toFixed(1).replace('.0','')+' a'}
 const dueList=()=>vis(S.cards).filter(c=>c.due<=Date.now()).sort((a,b)=>a.due-b.due);
 
-function rate(r){
-  const c=dueList()[0];if(!c)return;
-  const i=S.cards.findIndex(x=>x.id===c.id);
-  S.cards[i]=sched(c,r);
-  flip=false;
-  saveCard(S.cards[i]);
-  render();
+// Resumo na Tela Principal (Revisão Espaçada)
+function renderRevSummary(){
+  const now=Date.now(), all=vis(S.cards), due=dueList();
+  if(!all.length){ $('rev-summary').innerHTML='<div class="empty" style="margin-top:12px;">Crie um card para começar.</div>'; return; }
+  if(!due.length){ $('rev-summary').innerHTML=`<div class="empty" style="margin-top:12px;">Tudo em dia! Próxima em ${lbl(Math.min(...all.map(c=>c.due))-now)}.</div>`; return; }
+  
+  $('rev-summary').innerHTML = `
+    <div style="text-align:center; margin: 16px 0;">
+      <span class="stats"><b>${due.length}</b> cards agendados para hoje</span>
+    </div>
+    <button class="main" data-act="start-rev" style="width:100%; padding:14px; font-size:16px;">▶ Começar Revisão</button>
+  `;
 }
 
-function renderRev(){const now=Date.now(),all=vis(S.cards),due=dueList();let h='';
- if(!all.length)h='<div class="empty">Crie um card para começar a revisar.</div>';
- else if(!due.length)h=`<div class="empty">Tudo em dia por aqui. Próxima revisão em ${lbl(Math.min(...all.map(c=>c.due))-now)}.</div>`;
- else{const c=due[0],k=s=>due.filter(s).length;
-  const imgHtml = c.img ? `<img src="${c.img}" class="card-img">` : '';
-  h=`<div class="stats">Novos ${k(x=>x.st==='new')} · Aprendendo ${k(x=>x.st==='learn'||x.st==='relearn')} · Revisar ${k(x=>x.st==='review')}</div>
-  <div class="card a-${c.a}" data-act="flip" role="button" tabindex="0">
-    <div>${imgHtml}${esc(flip?c.v:c.f).replace(/\n/g,'<br>')}</div>
-  </div>`+
-  (flip?`<div class="rate">${['Errei','Difícil','Bom','Fácil'].map((t,i)=>`<button data-act="rate" data-r="${i+1}"><b>${t}</b><small>${lbl(sched(c,i+1).due-now)}</small></button>`).join('')}</div>`:'<button class="main" data-act="flip" style="width:100%;margin-top:8px">Mostrar resposta</button>')+
-  `<div class="ctrl" style="margin-top:8px"><span class="count">${NOME[c.a]}</span><button class="x" data-act="del-f" data-id="${c.id}" aria-label="Excluir card">🗑️</button></div>`}
- $('rev').innerHTML=h}
+// Renderiza o Modal Focado
+function renderStudyCard() {
+  const content = $('study-content');
+  
+  if (studyMode === 'rev') {
+    const due = dueList();
+    if (!due.length) {
+      content.innerHTML = '<div class="empty" style="padding:60px 0; font-size:18px;">Revisão concluída! 🎉</div>';
+      renderRevSummary(); renderCal();
+      return;
+    }
+    const c = due[0];
+    $('study-title').textContent = 'Revisão Espaçada · ' + NOME[c.a];
+    const imgHtml = c.img ? `<img src="${c.img}" class="card-img">` : '';
+    
+    let h = `<div class="card a-${c.a}" data-act="flip" role="button" tabindex="0" style="min-height:220px; font-size:18px;">
+      <div>${imgHtml}${esc(flip ? c.v : c.f).replace(/\n/g,'<br>')}</div>
+    </div>`;
+    
+    if (flip) {
+      h += `<div class="rate" style="margin-top:20px;">
+        ${['Errei','Difícil','Bom','Fácil'].map((t,i)=>`<button data-act="rate-rev" data-r="${i+1}" style="padding:14px 4px; font-size:15px;"><b>${t}</b><small>${lbl(sched(c,i+1).due-Date.now())}</small></button>`).join('')}
+      </div>`;
+    } else {
+      h += `<button class="main" data-act="flip" style="width:100%; margin-top:20px; padding:16px; font-size:16px;">Mostrar resposta</button>`;
+    }
+    content.innerHTML = h;
+  } 
+  
+  else if (studyMode === 'qs') {
+    if (!qsQueue.length) {
+      content.innerHTML = '<div class="empty" style="padding:60px 0; font-size:18px;">Estudo Rápido concluído! 🎉</div>';
+      return;
+    }
+    const c = qsQueue[0];
+    $('study-title').textContent = `⚡ Estudo Rápido · ${NOME[c.a]} (${qsQueue.length} restando)`;
+    const imgHtml = c.img ? `<img src="${c.img}" class="card-img">` : '';
+    
+    let h = `<div class="card a-${c.a}" data-act="flip" role="button" tabindex="0" style="min-height:220px; font-size:18px;">
+      <div>${imgHtml}${esc(flip ? c.v : c.f).replace(/\n/g,'<br>')}</div>
+    </div>`;
+    
+    if (flip) {
+      h += `<div class="rate" style="grid-template-columns:1fr 1fr; margin-top:20px; gap:12px;">
+        <button data-act="rate-qs" data-r="erro" style="padding:16px; font-size:16px; color:#c67891; border-color:#d8a9b8;"><b>❌ Errei</b></button>
+        <button data-act="rate-qs" data-r="acerto" style="padding:16px; font-size:16px; color:#789c78; border-color:#aecbae;"><b>✅ Acertei</b></button>
+      </div>`;
+    } else {
+      h += `<button class="main" data-act="flip" style="width:100%; margin-top:20px; padding:16px; font-size:16px;">Mostrar resposta</button>`;
+    }
+    content.innerHTML = h;
+  }
+}
 
 const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const fmtD=s=>{const p=s.split('-');return p[2]+'/'+p[1]};
@@ -233,18 +305,16 @@ function renderCal(){const y=cmo.getFullYear(),m=cmo.getMonth(),first=new Date(y
   h+=`<button class="day${k===today?' today':''}${k===selDay?' sel':''}" data-act="day" data-id="${k}">${d}<span>${cs.slice(0,4).map(c=>`<i class="a-${c.a}"></i>`).join('')}</span></button>`}
  $('cal').innerHTML=h;
  const ds=selDay?by[selDay]||[]:[],ST={new:'Novo',learn:'Aprendendo',relearn:'Reaprendendo',review:'Revisão'};
- $('l-d').innerHTML=selDay?(ds.length?ds.map(c=>`<li class="a-${c.a}">${esc(c.f)}<small>${NOME[c.a]} · ${ST[c.st]}</small></li>`).join(''):'<li class="empty" style="background:none;border:0">Nenhuma revisão em '+fmtD(selDay)+'.</li>'):'<li class="empty" style="background:none;border:0">Toque em um dia para ver as revisões previstas.</li>'}
+ $('l-d').innerHTML=selDay?(ds.length?ds.map(c=>`<li class="a-${c.a}">${esc(c.f)}<small>${NOME[c.a]} · ${ST[c.st]}</small></li>`).join(''):'<li class="empty" style="background:none;border:0">Nenhuma revisão em '+fmtD(selDay)+'.</li>'):'<li class="empty" style="background:none;border:0">Toque num dia para prever as revisões.</li>'}
 
-// Lógica do Repositório Geral (com opção de Edição)
 function renderRepo() {
   const rFilt = $('repo-filter').value;
   const all = rFilt ? S.cards.filter(x => x.a === rFilt) : S.cards;
-  $('repo-count').textContent = all.length + (all.length === 1 ? ' card encontrado' : ' cards encontrados');
+  $('repo-count').textContent = all.length + (all.length === 1 ? ' card' : ' cards');
   
   if(!all.length) { $('all-cards-list').innerHTML = '<div class="empty">Nenhum card encontrado.</div>'; return; }
   
   $('all-cards-list').innerHTML = all.map(c => {
-    // Se este for o card que o usuário clicou para editar
     if (editingId === c.id) {
       return `
         <div class="repo-card" style="border-left: 5px solid var(--${c.a});">
@@ -260,7 +330,6 @@ function renderRepo() {
         </div>
       `;
     }
-    // Modo de visualização normal no repositório
     return `
       <div class="repo-card" style="border-left: 5px solid var(--${c.a});">
         ${c.img ? `<img src="${c.img}" style="max-height:50px; border-radius:4px; float:right; margin-left:8px;">` : ''}
@@ -281,14 +350,19 @@ $('repo-filter').addEventListener('change', renderRepo);
 
 function render(){
   $('c-f').textContent=S.cards.length+' cards';
-  renderRev();renderCal();
+  renderRevSummary(); renderCal();
   const now=Date.now();
   $('tiles').innerHTML=AREAS.map(a=>{const cs=S.cards.filter(x=>x.a===a.id);
-    return `<button class="tile a-${a.id} ${filt===a.id?'on':''}" data-act="area" data-id="${a.id}"><i></i><b>${a.n}</b><span>${cs.length} cards · ${cs.filter(c=>c.due<=now).length} para revisar</span></button>`}).join('');
+    return `<div class="tile a-${a.id} ${filt===a.id?'on':''}">
+      <div class="tile-hitbox" data-act="area" data-id="${a.id}">
+        <i></i><b>${a.n}</b>
+        <span style="display:block; font-size:13px; color:var(--mute); margin-top:4px;">${cs.length} cards · ${cs.filter(c=>c.due<=now).length} a revisar hoje</span>
+      </div>
+      <button class="qs-btn" data-act="start-qs" data-id="${a.id}">⚡ Estudo Rápido</button>
+    </div>`}).join('');
   $('filter-text').innerHTML=filt?`Mostrando só ${NOME[filt]}<button data-act="clear">Ver tudo</button>`:'';
 }
 
-// Funções de Banco de Dados
 const saveCard = async (c) => setDoc(doc(db, 'medcards', c.id), c).catch(console.error);
 const delCard = async (id) => deleteDoc(doc(db, 'medcards', id)).catch(console.error);
 
@@ -298,7 +372,6 @@ async function loadData() {
     S.cards = snap.docs.map(d => d.data());
     S.cards.forEach(norm);
 
-    // Migração de cards antigos
     const oldRef = doc(db, 'medreview', 'dados');
     const oldSnap = await getDoc(oldRef);
     if(oldSnap.exists() && oldSnap.data().cards?.length > 0) {
@@ -310,12 +383,11 @@ async function loadData() {
     S.cards.sort((a,b) => b.due - a.due);
     render();
   } catch(e) {
-    $('rev').innerHTML = '<div class="empty">Falha ao carregar dados da nuvem. Verifique sua conexão.</div>';
+    $('rev-summary').innerHTML = '<div class="empty">Falha ao carregar dados da nuvem. Verifique a conexão.</div>';
   }
 }
 loadData();
 
-// Processamento de Imagens por Colar (Paste)
 const processImg = (file) => {
   if(!file || !file.type.startsWith('image/')) return;
   const reader = new FileReader();
@@ -338,7 +410,6 @@ const processImg = (file) => {
   reader.readAsDataURL(file);
 };
 
-// Captura o evento de "Colar" em qualquer lugar do formulário
 $('f-f').addEventListener('paste', e => {
   const items = (e.clipboardData || e.originalEvent.clipboardData).items;
   for (let item of items) if (item.type.indexOf('image/') === 0) processImg(item.getAsFile());
@@ -346,7 +417,6 @@ $('f-f').addEventListener('paste', e => {
 
 $('img-rem').onclick = () => { currentImg = null; $('img-preview').style.display = 'none'; };
 
-// Adicionando um card
 $('f-f').onsubmit=e=>{
   e.preventDefault();
   const c = newCard($('f-q').value.trim(), $('f-a').value.trim(), $('f-area').value, currentImg);
@@ -355,24 +425,60 @@ $('f-f').onsubmit=e=>{
   
   $('f-q').value=''; $('f-a').value=''; 
   $('img-rem').click(); 
-  flip=false; 
   render();
 };
 
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,id=b.dataset.id;
   
-  // Ações de Deleção
-  if(a==='del-f'){
-    if(confirm('Tem certeza que deseja excluir este card permanentemente?')){
-      S.cards=S.cards.filter(x=>x.id!==id);
-      delCard(id); 
-      flip=false; render();
-      if($('mod-all').open) renderRepo();
-    }
+  // Modais e Modos de Estudo
+  if(a==='start-rev'){
+    studyMode = 'rev'; flip = false;
+    renderStudyCard();
+    $('mod-study').showModal();
+  }
+  else if(a==='start-qs'){
+    const areaCards = S.cards.filter(x => x.a === id);
+    if(!areaCards.length) return alert('Nenhum card cadastrado nesta área!');
+    
+    // Embaralha para o Estudo Rápido
+    qsQueue = areaCards.sort(() => Math.random() - 0.5); 
+    studyMode = 'qs'; flip = false;
+    renderStudyCard();
+    $('mod-study').showModal();
+  }
+  else if(a==='close-study'){
+    $('mod-study').close();
+    studyMode = null;
+    renderRevSummary();
+    renderCal();
+  }
+  else if(a==='flip'){ flip=!flip; renderStudyCard(); }
+  
+  // Respostas
+  else if(a==='rate-rev') {
+    const c = dueList()[0];
+    const i = S.cards.findIndex(x=>x.id===c.id);
+    S.cards[i] = sched(c, +b.dataset.r);
+    saveCard(S.cards[i]);
+    flip = false;
+    renderStudyCard();
+  }
+  else if(a==='rate-qs') {
+    const c = qsQueue.shift();
+    if(b.dataset.r === 'erro') qsQueue.push(c); // Joga pro fim da fila se errar
+    flip = false;
+    renderStudyCard();
   }
   
-  // Ações de Edição (Repositório)
+  // Repositório e Filtros
+  else if(a==='del-f'){
+    if(confirm('Excluir este card permanentemente?')){
+      S.cards=S.cards.filter(x=>x.id!==id);
+      delCard(id); 
+      render(); if($('mod-all').open) renderRepo();
+    }
+  }
   else if(a==='edit-f'){ editingId = id; renderRepo(); }
   else if(a==='cancel-edit'){ editingId = null; renderRepo(); }
   else if(a==='save-edit'){
@@ -381,26 +487,27 @@ document.addEventListener('click',e=>{
       S.cards[idx].f = $('edit-q-'+id).value.trim();
       S.cards[idx].v = $('edit-a-'+id).value.trim();
       S.cards[idx].a = $('edit-area-'+id).value;
-      saveCard(S.cards[idx]); // Atualiza na nuvem
+      saveCard(S.cards[idx]); 
       editingId = null;
-      render();
-      if($('mod-all').open) renderRepo();
+      render(); if($('mod-all').open) renderRepo();
     }
   }
-  
-  // Ações Gerais
   else if(a==='view-all'){ $('repo-filter').value = filt || ""; renderRepo(); $('mod-all').showModal(); }
-  else if(a==='flip'){ flip=!flip; render(); }
-  else if(a==='rate') rate(+b.dataset.r);
-  else if(a==='area'){ filt=filt===id?null:id; flip=false; render(); }
-  else if(a==='clear'){ filt=null; flip=false; render(); }
+  else if(a==='area'){ filt=filt===id?null:id; render(); }
+  else if(a==='clear'){ filt=null; render(); }
   else if(a==='mprev'){ cmo.setMonth(cmo.getMonth()-1); render(); }
   else if(a==='mnext'){ cmo.setMonth(cmo.getMonth()+1); render(); }
   else if(a==='day'){ selDay=selDay===id?null:id; render(); }
 });
 
-document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.dataset&&e.target.dataset.act==='flip'){e.preventDefault();flip=!flip;render()}});
-setInterval(()=>{renderRev();renderCal()},30000);
+// Suporte a teclado (Espaço/Enter) no modo Estudo Focado
+document.addEventListener('keydown',e=>{
+  if($('mod-study').open && (e.key==='Enter'||e.key===' ')) {
+    const flipBtn = $('mod-study').querySelector('[data-act="flip"]');
+    if(flipBtn) { e.preventDefault(); flipBtn.click(); }
+  }
+});
+setInterval(()=>{if(!studyMode) { renderRevSummary(); renderCal(); }}, 30000);
 </script>
 </body>
 </html>
