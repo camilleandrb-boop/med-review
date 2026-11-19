@@ -7,17 +7,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* Paleta Off-White / Bege Claro */
   --bg:#f4f1ea;       
   --surface:#fdfcf9;  
   --ink:#4a453e;      
   --mute:#948d84;     
   --line:#e3dec9;     
-  
-  /* Cores das Grandes Áreas */
   --go:#d8a9b8;--go-bg:#f1dde4;--ped:#b9a9d4;--ped-bg:#e4dcf0;--cm:#a3bbd6;--cm-bg:#dce6f1;
   --cir:#aecbae;--cir-bg:#e0ecdf;--prev:#e0d29f;--prev-bg:#f1ebd2;
-  
   color-scheme:light;box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
@@ -48,7 +44,7 @@ ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px
 li{padding:9px 10px;border-radius:10px;background:var(--cb,var(--bg));border-left:4px solid var(--c,var(--line));overflow-wrap:anywhere}
 li small{display:block;color:var(--mute);font-size:13px}
 .x{border:0;background:transparent;color:var(--mute);padding:0 4px;font-size:18px;line-height:1}
-.empty{color:var(--mute);font-size:14px;padding:6px 2px; text-align:center;}
+.empty{color:var(--mute);font-size:14px;padding:6px 2px;text-align:center}
 .a-go{--c:var(--go);--cb:var(--go-bg)}.a-ped{--c:var(--ped);--cb:var(--ped-bg)}.a-cm{--c:var(--cm);--cb:var(--cm-bg)}
 .a-cir{--c:var(--cir);--cb:var(--cir-bg)}.a-prev{--c:var(--prev);--cb:var(--prev-bg)}
 .card{border-radius:12px;padding:24px 18px;min-height:120px;display:flex;align-items:center;justify-content:center;text-align:center;background:var(--cb,var(--bg));border:1px solid var(--c,var(--line));overflow-wrap:anywhere;margin-top:8px;cursor:pointer}
@@ -72,32 +68,35 @@ h3{margin:22px 0 10px;font-size:17px;font-weight:600}
 .tile i{display:block;width:34px;height:6px;border-radius:3px;background:var(--c);margin-bottom:8px}
 .qs-btn{width:100%;padding:10px;border-radius:8px;background:var(--surface);border:1px solid var(--c);color:var(--ink);font-weight:600;font-size:14px;text-align:center}
 .qs-btn:hover{background:var(--c);color:var(--bg)}
-.filter{font-size:14px;color:var(--mute);min-height:22px;margin-top:8px;display:flex;justify-content:space-between;align-items:center;}
+.filter{font-size:14px;color:var(--mute);min-height:22px;margin-top:8px;display:flex;justify-content:space-between;align-items:center}
 .filter button{padding:2px 8px;margin-left:6px;font-size:13px}
 
-/* Modais (Repositório e Modo Foco de Estudo) */
-dialog { border: none; border-radius: 14px; background: var(--surface); color: var(--ink); padding: 24px; width: 95%; max-width: 600px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
-dialog::backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
-.repo-list { display:flex; flex-direction:column; gap:10px; max-height:60vh; overflow-y:auto; padding-right:4px; margin-top: 16px; }
-.repo-card { padding:14px; border:1px solid var(--line); border-radius:10px; background:var(--bg); text-align:left; }
-.repo-q { font-weight:600; margin-bottom:6px; font-size:15px; }
-.repo-a { color:var(--mute); margin-bottom:10px; font-size:14px; }
-.img-prev { display:none; position:relative; align-self:flex-start; margin-top:4px; }
-.img-prev img { max-height:80px; border-radius:6px; border:1px solid var(--line); }
-.img-prev button { position:absolute; top:-8px; right:-8px; background:var(--ink); color:var(--surface); border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; padding:0; font-size:14px; border:none; cursor:pointer; }
-.card-img { max-width:100%; max-height:260px; border-radius:8px; margin-bottom:16px; object-fit:contain; display:block; margin-left:auto; margin-right:auto; }
-.edit-input { width: 100%; margin-bottom: 8px; padding: 8px; border: 1px solid var(--mute); border-radius: 6px; background: var(--surface); }
+/* Oclusão (Cloze) */
+.cloze-blank{display:inline-block;background:var(--surface);border:1.5px dashed var(--c);color:var(--mute);padding:0 10px;border-radius:6px;font-weight:700;margin:0 2px;letter-spacing:1px}
+.cloze-reveal{display:inline-block;background:var(--surface);border:2px solid var(--c);color:var(--ink);padding:0 8px;border-radius:6px;font-weight:700;margin:0 2px}
+.cloze-extra{margin-top:16px;padding-top:12px;border-top:1px dashed var(--c);font-size:15px;color:var(--mute);font-weight:400}
 
-/* Foco de Estudo Específico */
-#mod-study { max-width: 700px; padding: 32px 24px; }
-.study-title { font-size: 14px; color: var(--mute); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+/* Modais */
+dialog{border:none;border-radius:14px;background:var(--surface);color:var(--ink);padding:24px;width:95%;max-width:600px;box-shadow:0 10px 40px rgba(0,0,0,0.2)}
+dialog::backdrop{background:rgba(0,0,0,0.6);backdrop-filter:blur(5px)}
+.repo-list{display:flex;flex-direction:column;gap:10px;max-height:60vh;overflow-y:auto;padding-right:4px;margin-top:16px}
+.repo-card{padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);text-align:left}
+.repo-q{font-weight:600;margin-bottom:6px;font-size:15px}
+.repo-a{color:var(--mute);margin-bottom:10px;font-size:14px}
+.img-prev{display:none;position:relative;align-self:flex-start;margin-top:4px}
+.img-prev img{max-height:80px;border-radius:6px;border:1px solid var(--line)}
+.img-prev button{position:absolute;top:-8px;right:-8px;background:var(--ink);color:var(--surface);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;padding:0;font-size:14px;border:none;cursor:pointer}
+.card-img{max-width:100%;max-height:260px;border-radius:8px;margin-bottom:16px;object-fit:contain;display:block;margin-left:auto;margin-right:auto}
+.edit-input{width:100%;margin-bottom:8px;padding:8px;border:1px solid var(--mute);border-radius:6px;background:var(--surface)}
+
+#mod-study{max-width:700px;padding:32px 24px}
+.study-title{font-size:14px;color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header><h1>Med Review</h1><div class="sub" id="hoje"></div></header>
 <div class="grid">
-  <!-- Painel de Criação e Resumo -->
   <section class="panel">
     <h2>Flashcards 
       <span class="ctrl">
@@ -106,8 +105,8 @@ dialog::backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
       </span>
     </h2>
     <form id="f-f">
-      <input id="f-q" placeholder="Frente (pergunta)" required aria-label="Frente">
-      <input id="f-a" placeholder="Verso (resposta)" required aria-label="Verso">
+      <input id="f-q" placeholder="Frente (ou use ((palavra)) para ocluir)" required aria-label="Frente">
+      <input id="f-a" placeholder="Verso (opcional se usar oclusão)" aria-label="Verso">
       <div class="img-prev" id="img-preview">
         <img id="img-thumb" src="">
         <button type="button" id="img-rem" aria-label="Remover imagem">×</button>
@@ -116,18 +115,16 @@ dialog::backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
         <select id="f-area" aria-label="Área"></select>
         <button class="main" type="submit" style="flex:1">Criar card</button>
       </div>
-      <small style="color:var(--mute); font-size:12px; margin-top:-2px;">Dica: Cole imagens aqui com Ctrl+V (ou Colar).</small>
+      <small style="color:var(--mute); font-size:12px; margin-top:-2px;">Dica: Use ((texto)) para oclusão ou cole imagens com Ctrl+V.</small>
     </form>
     
     <div style="border-top: 1px solid var(--line); margin: 8px 0;"></div>
     
-    <!-- Resumo de Revisão SM-2 -->
     <div id="rev-summary">
       <div class="empty">Sincronizando com a nuvem... ☁️</div>
     </div>
   </section>
   
-  <!-- Calendário -->
   <section class="panel"><h2><span id="cal-t"></span><span class="ctrl"><button data-act="mprev" aria-label="Mês anterior">‹</button><button data-act="mnext" aria-label="Próximo mês">›</button></span></h2>
     <div class="cal" id="cal"></div><ul id="l-d"></ul></section>
 </div>
@@ -139,7 +136,6 @@ dialog::backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
 </div>
 </div>
 
-<!-- Modal Central de Estudo Focado -->
 <dialog id="mod-study">
   <div class="ctrl" style="align-items:center; margin-bottom: 24px;">
     <div class="study-title" id="study-title">Estudo</div>
@@ -148,7 +144,6 @@ dialog::backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
   <div id="study-content"></div>
 </dialog>
 
-<!-- Modal do Repositório -->
 <dialog id="mod-all">
   <div class="ctrl" style="align-items:flex-start;">
     <div>
@@ -189,11 +184,9 @@ const MIN=60000,DAY=86400000,STEPS=[1,10],RELEARN=[10];
 let S={cards:[]}, filt=null, cmo=new Date(), selDay=null;
 cmo.setDate(1);
 
-// Variáveis de Estudo Focado
-let studyMode = null; // 'rev' (SM-2) ou 'qs' (Rápido)
+let studyMode = null;
 let flip = false;
 let qsQueue = []; 
-
 let currentImg = null; 
 let editingId = null;  
 
@@ -202,11 +195,25 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const vis=l=>filt?l.filter(x=>x.a===filt):l;
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 
+const isCloze = s => /\(\(.+?\)\)/.test(s);
+const fmtCloze = (s, reveal) => esc(s)
+  .replace(/\(\((.+?)\)\)/g, reveal ? '<span class="cloze-reveal">$1</span>' : '<span class="cloze-blank">[...]</span>')
+  .replace(/\n/g, '<br>');
+
+const renderCardBody = (c, showBack) => {
+  const imgHtml = c.img ? `<img src="${c.img}" class="card-img">` : '';
+  if (isCloze(c.f)) {
+    const main = fmtCloze(c.f, showBack);
+    const extra = (showBack && c.v) ? `<div class="cloze-extra">${esc(c.v).replace(/\n/g,'<br>')}</div>` : '';
+    return `<div>${imgHtml}${main}${extra}</div>`;
+  }
+  return `<div>${imgHtml}${esc(showBack ? c.v : c.f).replace(/\n/g,'<br>')}</div>`;
+};
+
 $('f-area').innerHTML=AREAS.map(a=>`<option value="${a.id}">${a.n}</option>`).join('');
 $('repo-filter').innerHTML='<option value="">Todas as áreas (Geral)</option>' + AREAS.map(a=>`<option value="${a.id}">${a.n}</option>`).join('');
 $('hoje').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
 
-// SM-2
 function norm(c){if(c.st===undefined)Object.assign(c,{st:'new',step:0,ivl:0,ease:250,due:0,lapses:0})}
 const newCard=(f,v,a,img)=>({id:uid(),f,v,a,img:img||null,st:'new',step:0,ivl:0,ease:250,due:0,lapses:0});
 
@@ -226,7 +233,6 @@ function sched(c,r){const n={...c},now=Date.now();
 function lbl(ms){const m=ms/MIN;if(m<1)return'<1min';if(m<60)return Math.round(m)+'min';if(m<1440)return Math.round(m/60)+'h';const d=Math.round(ms/DAY);return d<30?d+'d':d<365?(d/30).toFixed(1).replace('.0','')+' mês':(d/365).toFixed(1).replace('.0','')+' a'}
 const dueList=()=>vis(S.cards).filter(c=>c.due<=Date.now()).sort((a,b)=>a.due-b.due);
 
-// Resumo na Tela Principal (Revisão Espaçada)
 function renderRevSummary(){
   const now=Date.now(), all=vis(S.cards), due=dueList();
   if(!all.length){ $('rev-summary').innerHTML='<div class="empty" style="margin-top:12px;">Crie um card para começar.</div>'; return; }
@@ -240,7 +246,6 @@ function renderRevSummary(){
   `;
 }
 
-// Renderiza o Modal Focado
 function renderStudyCard() {
   const content = $('study-content');
   
@@ -253,10 +258,9 @@ function renderStudyCard() {
     }
     const c = due[0];
     $('study-title').textContent = 'Revisão Espaçada · ' + NOME[c.a];
-    const imgHtml = c.img ? `<img src="${c.img}" class="card-img">` : '';
     
     let h = `<div class="card a-${c.a}" data-act="flip" role="button" tabindex="0" style="min-height:220px; font-size:18px;">
-      <div>${imgHtml}${esc(flip ? c.v : c.f).replace(/\n/g,'<br>')}</div>
+      ${renderCardBody(c, flip)}
     </div>`;
     
     if (flip) {
@@ -276,10 +280,9 @@ function renderStudyCard() {
     }
     const c = qsQueue[0];
     $('study-title').textContent = `⚡ Estudo Rápido · ${NOME[c.a]} (${qsQueue.length} restando)`;
-    const imgHtml = c.img ? `<img src="${c.img}" class="card-img">` : '';
     
     let h = `<div class="card a-${c.a}" data-act="flip" role="button" tabindex="0" style="min-height:220px; font-size:18px;">
-      <div>${imgHtml}${esc(flip ? c.v : c.f).replace(/\n/g,'<br>')}</div>
+      ${renderCardBody(c, flip)}
     </div>`;
     
     if (flip) {
@@ -305,7 +308,7 @@ function renderCal(){const y=cmo.getFullYear(),m=cmo.getMonth(),first=new Date(y
   h+=`<button class="day${k===today?' today':''}${k===selDay?' sel':''}" data-act="day" data-id="${k}">${d}<span>${cs.slice(0,4).map(c=>`<i class="a-${c.a}"></i>`).join('')}</span></button>`}
  $('cal').innerHTML=h;
  const ds=selDay?by[selDay]||[]:[],ST={new:'Novo',learn:'Aprendendo',relearn:'Reaprendendo',review:'Revisão'};
- $('l-d').innerHTML=selDay?(ds.length?ds.map(c=>`<li class="a-${c.a}">${esc(c.f)}<small>${NOME[c.a]} · ${ST[c.st]}</small></li>`).join(''):'<li class="empty" style="background:none;border:0">Nenhuma revisão em '+fmtD(selDay)+'.</li>'):'<li class="empty" style="background:none;border:0">Toque num dia para prever as revisões.</li>'}
+ $('l-d').innerHTML=selDay?(ds.length?ds.map(c=>`<li class="a-${c.a}">${isCloze(c.f)?fmtCloze(c.f,false):esc(c.f)}<small>${NOME[c.a]} · ${ST[c.st]}</small></li>`).join(''):'<li class="empty" style="background:none;border:0">Nenhuma revisão em '+fmtD(selDay)+'.</li>'):'<li class="empty" style="background:none;border:0">Toque num dia para prever as revisões.</li>'}
 
 function renderRepo() {
   const rFilt = $('repo-filter').value;
@@ -318,8 +321,8 @@ function renderRepo() {
     if (editingId === c.id) {
       return `
         <div class="repo-card" style="border-left: 5px solid var(--${c.a});">
-          <input class="edit-input" id="edit-q-${c.id}" value="${esc(c.f)}" placeholder="Frente (Pergunta)">
-          <input class="edit-input" id="edit-a-${c.id}" value="${esc(c.v)}" placeholder="Verso (Resposta)">
+          <input class="edit-input" id="edit-q-${c.id}" value="${esc(c.f)}" placeholder="Frente (ou ((oclusão)))">
+          <input class="edit-input" id="edit-a-${c.id}" value="${esc(c.v||'')}" placeholder="Verso (opcional na oclusão)">
           <select class="edit-input" id="edit-area-${c.id}">
             ${AREAS.map(a => `<option value="${a.id}" ${a.id === c.a ? 'selected' : ''}>${a.n}</option>`).join('')}
           </select>
@@ -330,13 +333,14 @@ function renderRepo() {
         </div>
       `;
     }
+    const cloze = isCloze(c.f);
     return `
-      <div class="repo-card" style="border-left: 5px solid var(--${c.a});">
+      <div class="repo-card a-${c.a}" style="border-left: 5px solid var(--${c.a});">
         ${c.img ? `<img src="${c.img}" style="max-height:50px; border-radius:4px; float:right; margin-left:8px;">` : ''}
-        <div class="repo-q">P: ${esc(c.f)}</div>
-        <div class="repo-a">R: ${esc(c.v)}</div>
+        <div class="repo-q">${cloze ? fmtCloze(c.f, true) : 'P: ' + esc(c.f)}</div>
+        ${c.v ? `<div class="repo-a">${cloze ? 'Nota: ' : 'R: '}${esc(c.v)}</div>` : ''}
         <div class="ctrl" style="margin-top:8px; clear:both;">
-          <span class="count">${NOME[c.a]}</span>
+          <span class="count">${NOME[c.a]}${cloze ? ' · Oclusão' : ''}</span>
           <div>
             <button class="x" data-act="edit-f" data-id="${c.id}" aria-label="Editar">✏️</button>
             <button class="x" data-act="del-f" data-id="${c.id}" aria-label="Excluir">🗑️</button>
@@ -419,7 +423,13 @@ $('img-rem').onclick = () => { currentImg = null; $('img-preview').style.display
 
 $('f-f').onsubmit=e=>{
   e.preventDefault();
-  const c = newCard($('f-q').value.trim(), $('f-a').value.trim(), $('f-area').value, currentImg);
+  const f = $('f-q').value.trim(), v = $('f-a').value.trim();
+  if(!v && !isCloze(f)) {
+    alert('Preencha o verso ou use ((palavra)) na frente para criar uma oclusão.');
+    $('f-a').focus();
+    return;
+  }
+  const c = newCard(f, v, $('f-area').value, currentImg);
   S.cards.unshift(c);
   saveCard(c); 
   
@@ -431,7 +441,6 @@ $('f-f').onsubmit=e=>{
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,id=b.dataset.id;
   
-  // Modais e Modos de Estudo
   if(a==='start-rev'){
     studyMode = 'rev'; flip = false;
     renderStudyCard();
@@ -440,8 +449,6 @@ document.addEventListener('click',e=>{
   else if(a==='start-qs'){
     const areaCards = S.cards.filter(x => x.a === id);
     if(!areaCards.length) return alert('Nenhum card cadastrado nesta área!');
-    
-    // Embaralha para o Estudo Rápido
     qsQueue = areaCards.sort(() => Math.random() - 0.5); 
     studyMode = 'qs'; flip = false;
     renderStudyCard();
@@ -455,7 +462,6 @@ document.addEventListener('click',e=>{
   }
   else if(a==='flip'){ flip=!flip; renderStudyCard(); }
   
-  // Respostas
   else if(a==='rate-rev') {
     const c = dueList()[0];
     const i = S.cards.findIndex(x=>x.id===c.id);
@@ -466,12 +472,11 @@ document.addEventListener('click',e=>{
   }
   else if(a==='rate-qs') {
     const c = qsQueue.shift();
-    if(b.dataset.r === 'erro') qsQueue.push(c); // Joga pro fim da fila se errar
+    if(b.dataset.r === 'erro') qsQueue.push(c);
     flip = false;
     renderStudyCard();
   }
   
-  // Repositório e Filtros
   else if(a==='del-f'){
     if(confirm('Excluir este card permanentemente?')){
       S.cards=S.cards.filter(x=>x.id!==id);
@@ -484,8 +489,10 @@ document.addEventListener('click',e=>{
   else if(a==='save-edit'){
     const idx = S.cards.findIndex(x => x.id === id);
     if(idx !== -1) {
-      S.cards[idx].f = $('edit-q-'+id).value.trim();
-      S.cards[idx].v = $('edit-a-'+id).value.trim();
+      const nf = $('edit-q-'+id).value.trim(), nv = $('edit-a-'+id).value.trim();
+      if(!nv && !isCloze(nf)) return alert('Preencha o verso ou use ((palavra)) na frente.');
+      S.cards[idx].f = nf;
+      S.cards[idx].v = nv;
       S.cards[idx].a = $('edit-area-'+id).value;
       saveCard(S.cards[idx]); 
       editingId = null;
@@ -500,7 +507,6 @@ document.addEventListener('click',e=>{
   else if(a==='day'){ selDay=selDay===id?null:id; render(); }
 });
 
-// Suporte a teclado (Espaço/Enter) no modo Estudo Focado
 document.addEventListener('keydown',e=>{
   if($('mod-study').open && (e.key==='Enter'||e.key===' ')) {
     const flipBtn = $('mod-study').querySelector('[data-act="flip"]');
