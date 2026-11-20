@@ -7,20 +7,38 @@
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f4f1ea;       
-  --surface:#fdfcf9;  
-  --ink:#4a453e;      
-  --mute:#948d84;     
-  --line:#e3dec9;     
+  --bg:#f4f1ea;
+  --surface:#fdfcf9;
+  --ink:#4a453e;
+  --mute:#948d84;
+  --line:#e3dec9;
   --go:#d8a9b8;--go-bg:#f1dde4;--ped:#b9a9d4;--ped-bg:#e4dcf0;--cm:#a3bbd6;--cm-bg:#dce6f1;
   --cir:#aecbae;--cir-bg:#e0ecdf;--prev:#e0d29f;--prev-bg:#f1ebd2;
+
+  /* Tons do Heatmap (4 níveis por área) */
+  --hm-empty:#ebe6da;
+  --hm-f1:#e2ddd1;--hm-f2:#cfc9bc;--hm-f3:#b5aea0;
+  --go-1:#eed5de;--go-2:#dfaec0;--go-3:#c78099;--go-4:#9e4f6b;
+  --ped-1:#e1d7f0;--ped-2:#c4b3de;--ped-3:#9c84c4;--ped-4:#6f549e;
+  --cm-1:#d5e3f0;--cm-2:#abc4de;--cm-3:#789ec4;--cm-4:#4b749e;
+  --cir-1:#d8e8d7;--cir-2:#b3d1b2;--cir-3:#83b082;--cir-4:#548553;
+  --prev-1:#efe8cc;--prev-2:#dfd09b;--prev-3:#c4ae64;--prev-4:#967f36;
+
   color-scheme:light;box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#2a2723;--surface:#36322d;--ink:#e8e4db;--mute:#a39c91;--line:#4f4a43;
   --go:#a9788a;--go-bg:#3a2d34;--ped:#8a7aa8;--ped-bg:#322d41;--cm:#6f89a8;--cm-bg:#2b3442;
-  --cir:#7a977a;--cir-bg:#2c3a2d;--prev:#a99b69;--prev-bg:#3c3829;color-scheme:dark;}}
+  --cir:#7a977a;--cir-bg:#2c3a2d;--prev:#a99b69;--prev-bg:#3c3829;
+  --hm-empty:#2e2b26;
+  --hm-f1:#3f3b35;--hm-f2:#524d45;--hm-f3:#696359;
+  --go-1:#4c343d;--go-2:#754959;--go-3:#a6657d;--go-4:#d88ca8;
+  --ped-1:#3e3552;--ped-2:#5e4f80;--ped-3:#8570b3;--ped-4:#b59ee6;
+  --cm-1:#314052;--cm-2:#4a6482;--cm-3:#6a8eb5;--cm-4:#95bae3;
+  --cir-1:#314532;--cir-2:#4a6e4b;--cir-3:#6c9c6e;--cir-4:#98cf9a;
+  --prev-1:#47412c;--prev-2:#6e633d;--prev-3:#9e8d54;--prev-4:#d4bf77;
+  color-scheme:dark;}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Figtree,system-ui,sans-serif}
 .wrap{max-width:1000px;margin:0 auto;padding:24px 16px 48px}
@@ -70,6 +88,31 @@ h3{margin:22px 0 10px;font-size:17px;font-weight:600}
 .qs-btn:hover{background:var(--c);color:var(--bg)}
 .filter{font-size:14px;color:var(--mute);min-height:22px;margin-top:8px;display:flex;justify-content:space-between;align-items:center}
 .filter button{padding:2px 8px;margin-left:6px;font-size:13px}
+
+/* Heatmap estilo Anki */
+.hm-panel{margin-top:20px;align-items:center;gap:14px}
+.hm-top{text-align:center;font-size:14px;color:var(--ink)}
+.hm-nav{display:flex;gap:6px;justify-content:center}
+.hm-nav button{padding:4px 12px;font-size:13px;border-radius:7px;line-height:1.2}
+.hm-scroll{width:100%;overflow-x:auto;padding-bottom:6px;display:flex;justify-content:center}
+.hm-inner{display:inline-flex;align-items:flex-start;gap:10px;padding:2px 4px}
+.hm-dow{display:grid;grid-template-rows:repeat(7,14px);gap:3px;font-size:10px;color:var(--mute);text-align:right;padding-right:2px;line-height:14px}
+.hm-months{display:flex;gap:12px}
+.hm-month{display:flex;flex-direction:column;align-items:center;gap:6px}
+.hm-grid{display:grid;grid-template-rows:repeat(7,14px);grid-auto-flow:column;grid-auto-columns:14px;gap:3px}
+.hm-cell{width:14px;height:14px;border-radius:3px;background:var(--hm-empty);border:none;padding:0;cursor:pointer;transition:transform .1s}
+.hm-cell:hover{transform:scale(1.18)}
+.hm-cell.pad{background:transparent;cursor:default;pointer-events:none}
+.hm-cell.today{outline:2px solid var(--ink);outline-offset:-1px}
+.hm-cell.sel{outline:2px solid var(--cm);outline-offset:1px}
+.hm-lbl{font-size:11px;color:var(--mute);text-transform:capitalize}
+.hm-detail{font-size:13px;color:var(--mute);min-height:20px;text-align:center}
+.hm-stats{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 22px;font-size:13px;color:var(--mute);border-top:1px solid var(--line);padding-top:12px;width:100%}
+.hm-stats b{color:var(--ink);font-weight:600}
+.hm-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;font-size:12px;color:var(--mute)}
+.hm-legend span{display:inline-flex;align-items:center;gap:4px}
+.hm-legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+@media(max-width:780px){.hm-scroll{justify-content:flex-start}}
 
 /* Oclusão (Cloze) */
 .cloze-blank{display:inline-block;background:var(--surface);border:1.5px dashed var(--c);color:var(--mute);padding:0 10px;border-radius:6px;font-weight:700;margin:0 2px;letter-spacing:1px}
@@ -134,6 +177,25 @@ dialog::backdrop{background:rgba(0,0,0,0.6);backdrop-filter:blur(5px)}
 <div class="filter">
   <span id="filter-text"></span>
 </div>
+
+<!-- Painel do Heatmap -->
+<section class="panel hm-panel" id="hm-panel">
+  <div class="hm-top" id="hm-top">Carregando atividade...</div>
+  <div class="hm-nav">
+    <button data-act="hm-prev" aria-label="Meses anteriores">‹</button>
+    <button data-act="hm-today" aria-label="Centralizar em hoje">○</button>
+    <button data-act="hm-next" aria-label="Próximos meses">›</button>
+  </div>
+  <div class="hm-scroll">
+    <div class="hm-inner">
+      <div class="hm-dow"><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span><span>D</span></div>
+      <div class="hm-months" id="hm-months"></div>
+    </div>
+  </div>
+  <div class="hm-detail" id="hm-detail">Toque em um dia para ver o detalhamento por área.</div>
+  <div class="hm-legend" id="hm-legend"></div>
+  <div class="hm-stats" id="hm-stats"></div>
+</section>
 </div>
 
 <dialog id="mod-study">
@@ -176,13 +238,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const cardsColl = collection(db, 'medcards');
+const heatRef = doc(db, 'medreview', 'heatmap');
 
-const AREAS=[{id:'go',n:'Ginecologia e Obstetrícia'},{id:'ped',n:'Pediatria'},{id:'cm',n:'Clínica Médica'},{id:'cir',n:'Cirurgia'},{id:'prev',n:'Preventiva'}];
+const AREAS=[{id:'go',n:'Ginecologia e Obstetrícia',s:'GO'},{id:'ped',n:'Pediatria',s:'Ped'},{id:'cm',n:'Clínica Médica',s:'CM'},{id:'cir',n:'Cirurgia',s:'Cir'},{id:'prev',n:'Preventiva',s:'Prev'}];
 const NOME=Object.fromEntries(AREAS.map(a=>[a.id,a.n]));
 const MIN=60000,DAY=86400000,STEPS=[1,10],RELEARN=[10];
 
-let S={cards:[]}, filt=null, cmo=new Date(), selDay=null;
+let S={cards:[]}, H={}, filt=null, cmo=new Date(), selDay=null;
 cmo.setDate(1);
+let hmOffset = 0, hmSel = null;
 
 let studyMode = null;
 let flip = false;
@@ -194,6 +258,9 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const vis=l=>filt?l.filter(x=>x.a===filt):l;
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const fmtD=s=>{const p=s.split('-');return p[2]+'/'+p[1]};
+const fmtFull=s=>{const p=s.split('-');return p[2]+'/'+p[1]+'/'+p[0]};
 
 const isCloze = s => /\(\(.+?\)\)/.test(s);
 const fmtCloze = (s, reveal) => esc(s)
@@ -212,6 +279,7 @@ const renderCardBody = (c, showBack) => {
 
 $('f-area').innerHTML=AREAS.map(a=>`<option value="${a.id}">${a.n}</option>`).join('');
 $('repo-filter').innerHTML='<option value="">Todas as áreas (Geral)</option>' + AREAS.map(a=>`<option value="${a.id}">${a.n}</option>`).join('');
+$('hm-legend').innerHTML=AREAS.map(a=>`<span><i style="background:var(--${a.id}-3)"></i>${a.s}</span>`).join('') + `<span><i style="background:var(--hm-f2)"></i>Agendados</span>`;
 $('hoje').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
 
 function norm(c){if(c.st===undefined)Object.assign(c,{st:'new',step:0,ivl:0,ease:250,due:0,lapses:0})}
@@ -233,6 +301,138 @@ function sched(c,r){const n={...c},now=Date.now();
 function lbl(ms){const m=ms/MIN;if(m<1)return'<1min';if(m<60)return Math.round(m)+'min';if(m<1440)return Math.round(m/60)+'h';const d=Math.round(ms/DAY);return d<30?d+'d':d<365?(d/30).toFixed(1).replace('.0','')+' mês':(d/365).toFixed(1).replace('.0','')+' a'}
 const dueList=()=>vis(S.cards).filter(c=>c.due<=Date.now()).sort((a,b)=>a.due-b.due);
 
+// Registro de atividade no Heatmap
+const saveHeat = () => setDoc(heatRef, { logs: H }).catch(console.error);
+function logStudy(areaId) {
+  const k = ymd(new Date());
+  if (!H[k]) H[k] = { total: 0 };
+  H[k].total = (H[k].total || 0) + 1;
+  H[k][areaId] = (H[k][areaId] || 0) + 1;
+  saveHeat();
+  renderHeatmap();
+}
+
+function topArea(entry) {
+  let best = 'cm', max = 0;
+  for (const a of AREAS) {
+    const v = entry[a.id] || 0;
+    if (v > max) { max = v; best = a.id; }
+  }
+  return best;
+}
+
+function heatLevel(n) {
+  if (n <= 0) return 0;
+  if (n <= 5) return 1;
+  if (n <= 15) return 2;
+  if (n <= 30) return 3;
+  return 4;
+}
+
+function renderHeatmap() {
+  const now = new Date();
+  const todayK = ymd(now);
+  const todayCount = (H[todayK] && H[todayK].total) || 0;
+  $('hm-top').innerHTML = `Estudados <b>${todayCount}</b> ${todayCount === 1 ? 'card' : 'cards'} hoje`;
+
+  // Mapeia cards futuros agendados
+  const futureMap = {};
+  S.cards.forEach(c => {
+    if (c.due > Date.now()) {
+      const k = ymd(new Date(c.due));
+      if (k > todayK) futureMap[k] = (futureMap[k] || 0) + 1;
+    }
+  });
+
+  // Exibe 8 meses (5 passados, mês atual, 2 futuros) deslocados por hmOffset
+  let monthsHtml = '';
+  for (let off = -5 + hmOffset; off <= 2 + hmOffset; off++) {
+    const d0 = new Date(now.getFullYear(), now.getMonth() + off, 1);
+    const y = d0.getFullYear(), m = d0.getMonth();
+    const daysInMonth = new Date(y, m + 1, 0).getDate();
+    const firstDow = (d0.getDay() + 6) % 7; // Segunda = 0 ... Domingo = 6
+
+    let cells = '<span class="hm-cell pad"></span>'.repeat(firstDow);
+    for (let day = 1; day <= daysInMonth; day++) {
+      const k = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+      const entry = H[k];
+      const fut = futureMap[k] || 0;
+      let bg = '', tip = fmtFull(k) + ': nenhum card';
+
+      if (entry && entry.total > 0) {
+        const area = topArea(entry);
+        const lv = heatLevel(entry.total);
+        bg = `style="background:var(--${area}-${lv})"`;
+        tip = `${fmtFull(k)}: ${entry.total} ${entry.total === 1 ? 'card' : 'cards'} (${NOME[area]})`;
+      } else if (k > todayK && fut > 0) {
+        const flv = fut <= 5 ? 1 : fut <= 15 ? 2 : 3;
+        bg = `style="background:var(--hm-f${flv})"`;
+        tip = `${fmtFull(k)}: ${fut} ${fut === 1 ? 'card agendado' : 'cards agendados'}`;
+      }
+
+      const cls = `hm-cell${k === todayK ? ' today' : ''}${k === hmSel ? ' sel' : ''}`;
+      cells += `<button class="${cls}" ${bg} data-act="hm-day" data-id="${k}" title="${tip}" aria-label="${tip}"></button>`;
+    }
+
+    const mName = d0.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
+    const yr = String(y).slice(2);
+    monthsHtml += `<div class="hm-month"><div class="hm-grid">${cells}</div><span class="hm-lbl">${mName} '${yr}</span></div>`;
+  }
+  $('hm-months').innerHTML = monthsHtml;
+
+  // Detalhe do dia selecionado
+  if (hmSel) {
+    const entry = H[hmSel];
+    const fut = futureMap[hmSel] || 0;
+    if (entry && entry.total > 0) {
+      const parts = AREAS.filter(a => entry[a.id] > 0).map(a => `${a.s}: ${entry[a.id]}`).join(' · ');
+      $('hm-detail').innerHTML = `<b>${fmtFull(hmSel)}</b> — ${entry.total} ${entry.total === 1 ? 'card' : 'cards'} (${parts})`;
+    } else if (hmSel > todayK && fut > 0) {
+      $('hm-detail').innerHTML = `<b>${fmtFull(hmSel)}</b> — ${fut} ${fut === 1 ? 'card agendado' : 'cards agendados'} para revisão`;
+    } else {
+      $('hm-detail').innerHTML = `<b>${fmtFull(hmSel)}</b> — nenhum card estudado`;
+    }
+  } else {
+    $('hm-detail').textContent = 'Toque em um dia para ver o detalhamento por área.';
+  }
+
+  // Cálculo das estatísticas (média, %, maior sequência, sequência atual)
+  const studiedDays = Object.keys(H).filter(k => H[k] && H[k].total > 0).sort();
+  const totalCards = studiedDays.reduce((acc, k) => acc + H[k].total, 0);
+  const avg = studiedDays.length ? Math.round(totalCards / studiedDays.length) : 0;
+
+  let daysLearnedPct = 0;
+  if (studiedDays.length) {
+    const firstDate = new Date(studiedDays[0] + 'T12:00:00');
+    const todayMid = new Date(todayK + 'T12:00:00');
+    const span = Math.max(1, Math.round((todayMid - firstDate) / DAY) + 1);
+    daysLearnedPct = Math.min(100, Math.round((studiedDays.length / span) * 100));
+  }
+
+  let longest = 0, run = 0, prevMs = null;
+  for (const k of studiedDays) {
+    const ms = new Date(k + 'T12:00:00').getTime();
+    run = (prevMs !== null && Math.round((ms - prevMs) / DAY) === 1) ? run + 1 : 1;
+    if (run > longest) longest = run;
+    prevMs = ms;
+  }
+
+  let current = 0;
+  const cursor = new Date(todayK + 'T12:00:00');
+  if (!H[todayK] || !H[todayK].total) cursor.setDate(cursor.getDate() - 1);
+  while (H[ymd(cursor)] && H[ymd(cursor)].total > 0) {
+    current++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  $('hm-stats').innerHTML = `
+    <span>Média diária: <b>${avg} cards</b></span>
+    <span>Dias estudados: <b>${daysLearnedPct}%</b></span>
+    <span>Maior sequência: <b>${longest} ${longest === 1 ? 'dia' : 'dias'}</b></span>
+    <span>Sequência atual: <b>${current} ${current === 1 ? 'dia' : 'dias'}</b></span>
+  `;
+}
+
 function renderRevSummary(){
   const now=Date.now(), all=vis(S.cards), due=dueList();
   if(!all.length){ $('rev-summary').innerHTML='<div class="empty" style="margin-top:12px;">Crie um card para começar.</div>'; return; }
@@ -253,7 +453,7 @@ function renderStudyCard() {
     const due = dueList();
     if (!due.length) {
       content.innerHTML = '<div class="empty" style="padding:60px 0; font-size:18px;">Revisão concluída! 🎉</div>';
-      renderRevSummary(); renderCal();
+      renderRevSummary(); renderCal(); renderHeatmap();
       return;
     }
     const c = due[0];
@@ -276,6 +476,7 @@ function renderStudyCard() {
   else if (studyMode === 'qs') {
     if (!qsQueue.length) {
       content.innerHTML = '<div class="empty" style="padding:60px 0; font-size:18px;">Estudo Rápido concluído! 🎉</div>';
+      renderHeatmap();
       return;
     }
     const c = qsQueue[0];
@@ -297,8 +498,6 @@ function renderStudyCard() {
   }
 }
 
-const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-const fmtD=s=>{const p=s.split('-');return p[2]+'/'+p[1]};
 const dayKey=c=>ymd(new Date(Math.max(c.due,Date.now())));
 function renderCal(){const y=cmo.getFullYear(),m=cmo.getMonth(),first=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).getDate(),today=ymd(new Date());
  $('cal-t').textContent=cmo.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
@@ -354,7 +553,7 @@ $('repo-filter').addEventListener('change', renderRepo);
 
 function render(){
   $('c-f').textContent=S.cards.length+' cards';
-  renderRevSummary(); renderCal();
+  renderRevSummary(); renderCal(); renderHeatmap();
   const now=Date.now();
   $('tiles').innerHTML=AREAS.map(a=>{const cs=S.cards.filter(x=>x.a===a.id);
     return `<div class="tile a-${a.id} ${filt===a.id?'on':''}">
@@ -372,9 +571,10 @@ const delCard = async (id) => deleteDoc(doc(db, 'medcards', id)).catch(console.e
 
 async function loadData() {
   try {
-    const snap = await getDocs(cardsColl);
+    const [snap, heatSnap] = await Promise.all([getDocs(cardsColl), getDoc(heatRef)]);
     S.cards = snap.docs.map(d => d.data());
     S.cards.forEach(norm);
+    if (heatSnap.exists() && heatSnap.data().logs) H = heatSnap.data().logs;
 
     const oldRef = doc(db, 'medreview', 'dados');
     const oldSnap = await getDoc(oldRef);
@@ -459,6 +659,7 @@ document.addEventListener('click',e=>{
     studyMode = null;
     renderRevSummary();
     renderCal();
+    renderHeatmap();
   }
   else if(a==='flip'){ flip=!flip; renderStudyCard(); }
   
@@ -467,16 +668,23 @@ document.addEventListener('click',e=>{
     const i = S.cards.findIndex(x=>x.id===c.id);
     S.cards[i] = sched(c, +b.dataset.r);
     saveCard(S.cards[i]);
+    logStudy(c.a);
     flip = false;
     renderStudyCard();
   }
   else if(a==='rate-qs') {
     const c = qsQueue.shift();
     if(b.dataset.r === 'erro') qsQueue.push(c);
+    logStudy(c.a);
     flip = false;
     renderStudyCard();
   }
   
+  else if(a==='hm-prev'){ hmOffset -= 3; renderHeatmap(); }
+  else if(a==='hm-next'){ hmOffset += 3; renderHeatmap(); }
+  else if(a==='hm-today'){ hmOffset = 0; hmSel = ymd(new Date()); renderHeatmap(); }
+  else if(a==='hm-day'){ hmSel = (hmSel === id ? null : id); renderHeatmap(); }
+
   else if(a==='del-f'){
     if(confirm('Excluir este card permanentemente?')){
       S.cards=S.cards.filter(x=>x.id!==id);
@@ -513,7 +721,7 @@ document.addEventListener('keydown',e=>{
     if(flipBtn) { e.preventDefault(); flipBtn.click(); }
   }
 });
-setInterval(()=>{if(!studyMode) { renderRevSummary(); renderCal(); }}, 30000);
+setInterval(()=>{if(!studyMode) { renderRevSummary(); renderCal(); renderHeatmap(); }}, 30000);
 </script>
 </body>
 </html>
